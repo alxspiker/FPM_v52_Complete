@@ -1,7 +1,7 @@
 # Finite Possibility Mechanics v5.2
 ## The Complete Unified Paper
 
-**Alx Spiker · AperioGenix · Edmonton, Alberta, Canada**
+**Alx Spiker · Edmonton, Alberta, Canada**
 **18 June 2026**
 
 ---
@@ -175,5 +175,5 @@ BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB}
 
 ---
 
-*Alx Spiker · AperioGenix · Edmonton, Alberta, Canada*
+*Alx Spiker · Edmonton, Alberta, Canada*
 *FPM v5.2 · Complete Unified Paper · 18 June 2026*

@@ -394,7 +394,7 @@ def build_cover():
 
     doc_info = [
         ['Author', AUTHOR_NAME],
-        ['Affiliation', 'AperioGenix  ·  Edmonton, Alberta, Canada'],
+        ['Location', 'Edmonton, Alberta, Canada'],
         ['Document Type', 'Complete Unified Paper (single document)'],
         ['Contents', 'Interpretive framework + inline mathematical derivations'],
         ['Methodology', '5 axioms  ·  21 derived quantities  ·  0 fitted constants'],

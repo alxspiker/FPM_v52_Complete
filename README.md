@@ -1,6 +1,6 @@
 # FPM v5.2 — The Complete Unified Paper
 
-**Author:** Alx Spiker · AperioGenix · Edmonton, Alberta, Canada
+**Author:** Alx Spiker · Edmonton, Alberta, Canada
 **Date:** 18 June 2026
 **Version:** v5.2 — Complete Unified Paper (single document)
 
