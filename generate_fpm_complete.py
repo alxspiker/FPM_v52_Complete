@@ -809,7 +809,7 @@ def build_part_ii():
 
     flow.append(Paragraph("3.1 The 9:1 Channel Split (Derived)", styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 1 (9:1 Channel Split).</b> The directed routing tensor "
+        "<b>Derived Result 1 (9:1 Channel Split).</b> The directed routing tensor "
         "<i>R</i><sub>ij</sub> on Z<sup>3</sup> has 9 directed channels "
         "and 1 scalar trace channel, giving the 9:1 ratio that fixes the "
         "mobility law exponents &alpha; = 1/5 and &beta; = 9/5."))
@@ -986,7 +986,7 @@ def build_part_ii():
     flow.append(Paragraph("4.4 Derivation of the Directed Routing Asymmetry &chi;<sub>&rarr;</sub>",
                           styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 2 (Directed Routing Asymmetry).</b> The directed routing "
+        "<b>Derived Result 2 (Directed Routing Asymmetry).</b> The directed routing "
         "asymmetry parameter is &chi;<sub>&rarr;</sub> = 0.25, derived from "
         "the percolation threshold shift."))
     flow.append(Paragraph("<b>Derivation.</b>", styles['Body']))
@@ -1075,7 +1075,7 @@ def build_part_iii():
     # Section 5.1: Viscosity bounds derivation inline
     flow.append(Paragraph("5.1 Derivation of the Viscosity Bounds", styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 3 (Viscosity Bounds).</b> The viscosity field "
+        "<b>Derived Result 3 (Viscosity Bounds).</b> The viscosity field "
         "&Omega;<sub>t</sub> is bounded by &Omega;<sub>min</sub> = 0.50 "
         "(directed percolation threshold) and &Omega;<sub>max</sub> = 0.85 "
         "(Nyquist action sampling limit)."))
@@ -1182,7 +1182,7 @@ def build_part_iii():
     flow.append(Paragraph("5.4 Derivation of the 3/4 Causal Energy-Depletion Exponent",
                           styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 4 (3/4 Causal Energy Depletion).</b> Under the "
+        "<b>Derived Result 4 (3/4 Causal Energy Depletion).</b> Under the "
         "product-measure condition on the 4D causal update geometry, the "
         "effective energy under baryonic load B is "
         "e(B) = (1+B)<sup>&minus;3/4</sup>."))
@@ -1332,7 +1332,7 @@ def build_part_iv():
 
     flow.append(Paragraph("7.1 Energy Closure", styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 5 (Energy Closure).</b> &sum;<sub>i</sub> r<sub>i,t</sub> = "
+        "<b>Closure Principle 1 (Energy Closure).</b> &sum;<sub>i</sub> r<sub>i,t</sub> = "
         "&sum;<sub>i</sub> L<sub>i,t</sub>, so &sum;<sub>i</sub> E<sub>i,t+1</sub> = "
         "&sum;<sub>i</sub> E<sub>i,t</sub>."))
     flow.append(proof(
@@ -1344,7 +1344,7 @@ def build_part_iv():
 
     flow.append(Paragraph("7.2 Entropy Closure", styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 6 (Entropy Closure).</b> &Delta;S<sub>sem</sub> + "
+        "<b>Closure Principle 2 (Entropy Closure).</b> &Delta;S<sub>sem</sub> + "
         "&Delta;S<sub>thermo</sub> &ge; 0 at every tick. The gate is "
         "saturated whenever consolidation reduces semantic entropy."))
     flow.append(proof(
@@ -1360,7 +1360,7 @@ def build_part_iv():
 
     flow.append(Paragraph("7.3 Angular Momentum Closure", styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 7 (Angular Momentum Closure).</b> Under the torsion "
+        "<b>Closure Principle 3 (Angular Momentum Closure).</b> Under the torsion "
         "decomposition with A<sub>ij</sub> = &partial;<sub>i</sub>&phi;<sub>j</sub> "
         "&minus; &partial;<sub>j</sub>&phi;<sub>i</sub> (pure gauge), the "
         "antisymmetric part generates no net torque on a closed surface: "
@@ -1375,7 +1375,7 @@ def build_part_iv():
 
     flow.append(Paragraph("7.4 Information Closure", styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 8 (Information Closure).</b> The route cost L<sub>t</sub> "
+        "<b>Closure Principle 4 (Information Closure).</b> The route cost L<sub>t</sub> "
         "is the single bookkeeping currency across all five physical bridges. "
         "No additional currency is introduced in any bridge."))
 
@@ -1383,7 +1383,7 @@ def build_part_iv():
     flow.append(Paragraph("8. Derivation of the Action Floor c<sub>0</sub>",
                           styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 9 (Action Floor).</b> The minimum per-tick action is "
+        "<b>Derived Result 5 (Action Floor).</b> The minimum per-tick action is "
         "c<sub>0</sub> = 0.05, derived from the AxCore operational minimum "
         "and the calibration factor (Section 26)."))
     flow.append(derivation(
@@ -1406,7 +1406,7 @@ def build_part_iv():
         "f<sub>univ</sub> &asymp; 86.8 ZHz."))
     flow.append(derivation(
         "<b>Step 4: Consistency check.</b> The rounded value c<sub>0</sub> = 0.05 "
-        "must satisfy the Nyquist ceiling condition (Theorem 3): "
+        "must satisfy the Nyquist ceiling condition (Derived Result 3): "
         "&Omega;<sub>max</sub> = 1 &minus; 2&middot;c<sub>0</sub>/E<sub>max</sub> "
         "= 0.85, giving E<sub>max</sub> = 2&middot;0.05/0.15 = 0.667 action "
         "units. This is consistent with the closed-universe energy budget "
@@ -1419,7 +1419,7 @@ def build_part_iv():
     flow.append(Paragraph("9. Derivation of the Smoothness Coefficient &lambda;",
                           styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 10 (Smoothness Coefficient).</b> The viscosity smoothness "
+        "<b>Derived Result 6 (Smoothness Coefficient).</b> The viscosity smoothness "
         "penalty coefficient is &lambda; = 36/7 &asymp; 5.143, derived from "
         "the directed causal channel structure."))
     flow.append(derivation(
@@ -1452,7 +1452,7 @@ def build_part_iv():
     flow.append(Paragraph("10. Derivation of the Action Ceiling L<sub>max</sub>",
                           styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 11 (Action Ceiling).</b> The maximum per-tick action is "
+        "<b>Derived Result 7 (Action Ceiling).</b> The maximum per-tick action is "
         "L<sub>max</sub> = 3.285, derived from the AxCore operational "
         "maximum, the number of operations per tick, and the smoothness "
         "penalty at maximum viscosity jump."))
@@ -1491,12 +1491,12 @@ def build_part_iv():
     flow.append(Paragraph("11. Derivation of the Rest Action L<sub>rest</sub>",
                           styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 12 (Rest Action).</b> The deep-space rest action is "
+        "<b>Derived Result 8 (Rest Action).</b> The deep-space rest action is "
         "L<sub>rest</sub> = 0.1030625, derived from the zero-drag isotropic "
         "loop residual cost."))
     flow.append(derivation(
         "<b>Step 1: Zero-drag loop conditions.</b> At the zero-drag "
-        "isotropic loop (Theorem 14, Section 16), the state is: D = 0, "
+        "isotropic loop (Theorem 4, Section 16), the state is: D = 0, "
         "I = 0, |p &minus; &tau;| = 0, b = 0, |&pi; &minus; &tau;| = 0, "
         "q = 0, |&Delta;&Omega;| = 0. The only residual cost is from the "
         "directed routing ledger maintenance."))
@@ -1533,7 +1533,7 @@ def build_part_iv():
     flow.append(Paragraph("12. Derivation of the Finite Lag Ceiling &gamma;<sub>max</sub>",
                           styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 13 (Finite Lag Ceiling).</b> The maximum admissible lag "
+        "<b>Derived Result 9 (Finite Lag Ceiling).</b> The maximum admissible lag "
         "factor is &gamma;<sub>max</sub> = L<sub>max</sub>/L<sub>rest</sub> "
         "= 3.285/0.1030625 = 31.8739."))
     flow.append(derivation(
@@ -1972,7 +1972,7 @@ def build_part_vi():
 
     flow.append(Paragraph("23.2 The 16/3 Ledger Inertia Ratio (Derived)", styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 5&prime; (Ledger Inertia).</b> The ledger-to-baryon "
+        "<b>Cosmology Result 1 (Ledger Inertia).</b> The ledger-to-baryon "
         "density ratio is &rho;<sub>L</sub>/&rho;<sub>b</sub> = 16/3 &asymp; "
         "5.333, derived from the 4&times;4 causal covariance matrix structure."))
     flow.append(derivation(
@@ -2014,7 +2014,7 @@ def build_part_vi():
     flow.append(Paragraph("23.4 Derivation of the CMB Source Amplitude A<sub>FPM</sub>",
                           styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 5&prime;&prime; (CMB Source Amplitude).</b> The fractional "
+        "<b>Cosmology Result 2 (CMB Source Amplitude).</b> The fractional "
         "temperature source amplitude is A<sub>FPM</sub> = (2/3)&radic;(16/3 / "
         "N<sub>bit-eq</sub>) &asymp; 4.04&times;10<sup>-5</sup>."))
     flow.append(derivation(
@@ -2045,7 +2045,7 @@ def build_part_vi():
     flow.append(Paragraph("23.5 Derivation of Spectral Tilt n<sub>s</sub> and Tensor-to-Scalar Ratio r",
                           styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 5&prime;&prime;&prime; (Spectral Parameters).</b> The "
+        "<b>Cosmology Result 3 (Spectral Parameters).</b> The "
         "spectral tilt is n<sub>s</sub> = 1 &minus; L<sub>rest</sub>/L<sub>max</sub> "
         "= 0.9686 and the tensor-to-scalar ratio is r = (1/9)(L<sub>rest</sub>/L<sub>max</sub>) "
         "= 0.00349."))
@@ -2064,7 +2064,7 @@ def build_part_vi():
         "n<sub>s</sub> = 0.965. Relative error: 0.37%."))
     flow.append(derivation(
         "<b>Step 4: Tensor mode suppression.</b> Tensor modes are suppressed "
-        "by the 9:1 directed-to-trace channel ratio (Theorem 1): only the "
+        "by the 9:1 directed-to-trace channel ratio (Derived Result 1): only the "
         "trace channel (1/9 of total) couples to tensor modes."))
     flow.append(derivation(
         "<b>Step 5: Tensor formula.</b>"))
@@ -2082,7 +2082,7 @@ def build_part_vi():
     flow.append(Paragraph("23.6 Derivation of the CMB Damping Scale &ell;<sub>D</sub>",
                           styles['H2']))
     flow.append(theorem(
-        "<b>Theorem 5&prime;&prime;&prime;&prime; (Damping Scale).</b> The CMB "
+        "<b>Cosmology Result 4 (Damping Scale).</b> The CMB "
         "damping scale is &ell;<sub>D</sub> = &radic;(&ell;<sub>A</sub> &middot; "
         "&ell;<sub>freeze</sub>) &asymp; 1310."))
     flow.append(derivation(
@@ -2132,7 +2132,7 @@ def build_part_vii():
     # Section 24: Universal Tick derivation
     flow.append(Paragraph("24. Derivation of the Universal Engine Tick", styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 6 (Universal Tick).</b> The universal engine tick is "
+        "<b>Calibration Result 1 (Universal Tick).</b> The universal engine tick is "
         "&Delta;t<sub>univ</sub> = h/(m<sub>e</sub>c<sup>2</sup>&middot;&alpha;<sub>PP</sub>) "
         "&asymp; 1.152&times;10<sup>-23</sup> s."))
     flow.append(derivation(
@@ -2177,7 +2177,7 @@ def build_part_vii():
     # Section 25: G_FPM derivation
     flow.append(Paragraph("25. Derivation of G<sub>FPM</sub>", styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 7 (G<sub>FPM</sub>).</b> The FPM-derived gravitational "
+        "<b>Calibration Result 2 (G<sub>FPM</sub>).</b> The FPM-derived gravitational "
         "constant is G<sub>FPM</sub> &asymp; 6.677&times;10<sup>-11</sup> "
         "m<sup>3</sup>kg<sup>-1</sup>s<sup>-2</sup>, within 0.04% of CODATA."))
     flow.append(derivation(
@@ -2233,7 +2233,7 @@ def build_part_vii():
     flow.append(Paragraph("26. Derivation of the AxCore-to-FPM Calibration Factor",
                           styles['H1']))
     flow.append(theorem(
-        "<b>Theorem 8 (Calibration Factor).</b> The AxCore-to-FPM calibration "
+        "<b>Calibration Result 3 (Calibration Factor).</b> The AxCore-to-FPM calibration "
         "factor is calib = d<sub>causal</sub> &middot; &lang;L<sub>AxCore</sub>&rang; "
         "= 4 &times; 20 = 80."))
     flow.append(derivation(
