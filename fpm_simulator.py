@@ -1522,7 +1522,7 @@ class MasterChainTrajectory:
     mean_C_geo: List[float] = field(default_factory=list)
     mean_smooth: List[float] = field(default_factory=list)
     metabolic_mode: List[str] = field(default_factory=list)
-    closure_violations_energy: int = 0
+    boundary_clip_events: int = 0
     thermal_exhaust: List[float] = field(default_factory=list)
     starvation_deficit: List[float] = field(default_factory=list)
     total_thermal_exhaust: float = 0.0
@@ -1607,7 +1607,7 @@ def run_master_chain(d: DerivedConstants,
             tick_exhaust += exhaust
             tick_starvation += starvation
             if exhaust > 0.0 or starvation > 0.0:
-                traj.closure_violations_energy += 1
+                traj.boundary_clip_events += 1
             dm.E = float(np.clip(raw_E, 0.0, d.E_max))
             # Coherence
             dm.c = coherence_update(dm, kappas[i], d)
@@ -2035,7 +2035,7 @@ def main() -> None:
                             baryonic_load=0.0)
     print(f"  Initial E = {traj.total_E[0]:.6f}")
     print(f"  Final E   = {traj.total_E[-1]:.6f}")
-    print(f"  Closure violations (energy): {traj.closure_violations_energy}")
+    print(f"  Boundary clip events:        {traj.boundary_clip_events}")
     print(f"  Thermal exhaust ledger:       {traj.total_thermal_exhaust:.6f}")
     print(f"  Starvation deficit ledger:    {traj.total_starvation_deficit:.6f}")
     print(f"  Mean L (final 50 ticks):     {np.mean(traj.mean_L[-50:]):.4f}")
@@ -2100,7 +2100,7 @@ def main() -> None:
             "mean_C_geo": traj.mean_C_geo,
             "mean_smooth": traj.mean_smooth,
             "metabolic_mode": traj.metabolic_mode,
-            "closure_violations_energy": traj.closure_violations_energy,
+            "boundary_clip_events": traj.boundary_clip_events,
             "thermal_exhaust": traj.thermal_exhaust,
             "starvation_deficit": traj.starvation_deficit,
             "total_thermal_exhaust": traj.total_thermal_exhaust,
