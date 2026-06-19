@@ -1,8 +1,8 @@
-# FPM v5.4 — The Complete Unified Paper
+# FPM v5.5 — The Complete Unified Paper
 
 **Author:** Alx Spiker · Edmonton, Alberta, Canada
 **Date:** 18 June 2026
-**Version:** v5.4 — Complete Unified Paper (single document)
+**Version:** v5.5 — Complete Unified Paper (single document)
 
 ## Read the Paper
 
@@ -92,6 +92,7 @@ python generate_fpm_complete.py      # Regenerates the PDF
 ### Part VI: Physical Bridges (with CMB parameter derivations inline)
 - §19-22 Bridges 1-4 (Lindblad, Landauer, Gravity, Time)
 - §23 Bridge 5: CMB (16/3 ratio, A_FPM, n_s, r, ℓ_D **all derived inline**)
+- §23.7 Bridge 6: Born-compatible distribution bridge (**conditional on no-label exchangeability**)
 
 ### Part VII: Calibration & G_FPM (with full derivation inline)
 - §24 Derivation of the Universal Engine Tick
@@ -99,7 +100,7 @@ python generate_fpm_complete.py      # Regenerates the PDF
 - §26 Derivation of the AxCore-to-FPM Calibration Factor = 80
 
 ### Part VIII: Numerical Validation
-- §27 Eleven experiments summary plus 8b starvation subtest
+- §27 Twelve experiments summary plus 8b starvation subtest
 
 ### Part IX: Master Chain & Open Frontiers
 - §28 The Master Chain Equation
@@ -172,16 +173,17 @@ All 9 derivation checks pass:
 - **v5.1** was the pure derivation document (how things are proven) — 28 pages
 - **v5.2** is the **single unified paper** that combines both, with all derivations inline where they belong
 - **v5.3** replaces the continuous N_bit-eq approximation with the exact discrete Z^3 lattice-point count 1,452,997,909 and reports the resulting deterministic G_FPM variance at T=300.0 K
-- **v5.4** (this) seals the depletion-floor, galaxy-boundary, and clipping-ledger audit leaks by distinguishing raw/effective e(B), making R_d an environmental boundary input, and tracking thermal exhaust/starvation deficit
+- **v5.4** seals the depletion-floor, galaxy-boundary, and clipping-ledger audit leaks by distinguishing raw/effective e(B), making R_d an environmental boundary input, and tracking thermal exhaust/starvation deficit
+- **v5.5** (this) codifies the Born-compatible distribution bridge with exact finite microcell quantization and explicit no-label exchangeability as the remaining conditional theorem
 
-The v5.4 paper is the definitive document. It contains everything from v5.0-v5.3 in a single coherent narrative.
+The v5.5 paper is the definitive document. It contains everything from v5.0-v5.4 in a single coherent narrative.
 
 ## The Deepest Result
 
-The FPM v5.4 framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms or a conditional bridge evaluation with explicit environmental inputs. The framework's empirical engagements (SPARC, Planck, CODATA) are genuine tests of the axioms, not fits to data.
+The FPM v5.5 framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms or a conditional bridge evaluation with explicit environmental inputs. The Born-compatible bridge is explicitly conditional on no-label exchangeability rather than claimed as an unconditional proof of quantum probability. The framework's empirical engagements (SPARC, Planck, CODATA) are genuine tests of the axioms, not fits to data.
 
 **The 0.09% deterministic match to CODATA G at T=300.0 K, the 0.45% match to Planck dark-to-baryonic ratio, and the 0.54% match to Planck TT RMS are all derived predictions, not fitted parameters.**
 
 ---
 
-*FPM v5.4 · Complete Unified Paper · 18 June 2026*
+*FPM v5.5 · Complete Unified Paper · 18 June 2026*

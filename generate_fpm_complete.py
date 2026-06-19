@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FPM v5.4 - The Complete Unified Paper (Single Document)
+FPM v5.5 - The Complete Unified Paper (Single Document)
 =========================================================
 A single self-contained paper that integrates:
   - The interpretive framework (what things mean)
@@ -57,7 +57,7 @@ os.makedirs(BUILD_DIR, exist_ok=True)
 
 AUTHOR_NAME = "Alx Spiker"
 REPORT_DATE = "18 June 2026"
-VERSION = "v5.4 - Complete Unified Paper"
+VERSION = "v5.5 - Complete Unified Paper"
 
 # Load numerical results
 RESULTS_FALLBACK_PATH = os.path.join(SCRIPT_DIR, 'fpm_results.json')
@@ -326,7 +326,7 @@ styles = make_styles()
 class PaperDoc(BaseDocTemplate):
     def __init__(self, filename, **kw):
         super().__init__(filename, **kw)
-        self.report_title = "FPM v5.4 - Complete Unified Paper"
+        self.report_title = "FPM v5.5 - Complete Unified Paper"
         self.allowSplitting = 1
         cover_frame = Frame(0, 0, A4[0], A4[1], id='cover',
                              leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
@@ -547,7 +547,7 @@ def build_abstract():
         "This single self-contained paper presents the framework in full: it "
         "states the five axioms, derives every constant inline (zero fitted "
         "parameters, zero asserted calibration factors), proves the six theorems, "
-        "builds the five physical bridges, calibrates to fundamental constants, "
+        "builds the six physical bridges, calibrates to fundamental constants, "
         "and validates the framework through eleven numerical experiments plus "
         "a starvation subtest. The "
         "framework is organized as a single causal chain: five axioms generate "
@@ -579,7 +579,7 @@ def build_abstract():
         "The framework is classified as a <b>phenomenological information-"
         "theoretic topology</b>: viable as an interpretive framework, productive "
         "as a source of falsifiable predictions, and honest about its divergences "
-        "from standard physics (no Born rule, no Einstein field equations, energy "
+        "from standard physics (Born bridge conditional on exchangeability, no Einstein field equations, energy "
         "as thermodynamic potential rather than Noether charge).",
         styles['AbstractBody']))
     flow.append(Spacer(1, 6))
@@ -701,10 +701,12 @@ def build_part_i():
         "Z<sup>3</sup> lattice with finite memory and finite energy budget "
         "E<sub>max</sub>. Each lattice site holds a directed routing ledger "
         "<i>R</i><sub>ij</sub>(&times;) &isin; &#8477;<sup>3&times;3</sup> with "
-        "i, j &isin; {x, y, z}. The state at tick t is the quintuple "
-        "<i>X</i><sub>t</sub> = (p<sub>L,t</sub>, p<sub>R,t</sub>, c<sub>t</sub>, "
-        "E<sub>t</sub>, b<sub>t</sub>) with the constraint p<sub>L,t</sub> + "
-        "p<sub>R,t</sub> = 1."))
+        "i, j &isin; {x, y, z}. In v5.5 the native runtime state carries a "
+        "9-channel complex carrier &psi;<sub>i,t</sub> over the directed route "
+        "channels, together with E<sub>t</sub>, b<sub>t</sub>, &tau;<sub>t</sub>, "
+        "and &pi;<sub>t</sub>. The older scalar quantities p<sub>L,t</sub>, "
+        "p<sub>R,t</sub>, and c<sub>t</sub> are derived observables of "
+        "&psi;<sub>i,t</sub>, not independent state variables."))
     flow.append(Paragraph(
         "The substrate is discrete, not continuous. The routing ledger is "
         "<i>directed</i> &mdash; <i>R</i><sub>ij</sub> &ne; <i>R</i><sub>ji</sub> in "
@@ -1314,23 +1316,28 @@ def build_part_iv():
         "derived network statistic.",
         styles['Body']))
 
-    flow.append(Paragraph("6.3 The Coherence Update", styles['H2']))
+    flow.append(Paragraph("6.3 The Native Carrier Update", styles['H2']))
     flow.append(Paragraph(
-        "Coherence evolves by the affine map c<sub>t+1</sub> = "
-        "&kappa;<sub>t</sub> c<sub>t</sub> + &nu;<sub>t</sub>, where "
-        "&nu;<sub>t</sub> &isin; &#8450; is bounded innovation noise. The noise "
-        "bound is energy-gated to prevent a thermodynamic leak at zero energy:",
+        "The per-tick runtime evolves the native 9-channel complex carrier by "
+        "route-cost phase rotation. For channel i, the channel cost "
+        "L<sub>i,t</sub> is induced by the local route tensor and the total "
+        "Lagrangian, and the update is:",
         styles['Body']))
     flow.extend(eq(
-        r"|\nu_t| \leq \xi_{\max} \left(\frac{E_t}{E_{\max}}\right)^\delta + "
-        r"\xi_{\mathrm{floor}}"))
+        r"\psi_{i,t+1}=\psi_{i,t}\exp(-i\theta L_{i,t})"))
+    flow.append(Paragraph(
+        "The scalar coherence c<sub>t</sub> and binary routing probabilities "
+        "p<sub>L,t</sub>, p<sub>R,t</sub> are projections of this carrier. "
+        "The affine Lindblad map remains a Bridge 1 diagnostic for the induced "
+        "dephasing behavior; it is not the master-chain state update.",
+        styles['Body']))
 
     flow.append(Paragraph("6.4 The Low-Energy Consolidation Rule", styles['H2']))
     flow.append(Paragraph(
         "When energy falls below a threshold fraction &epsilon;E<sub>max</sub>, "
         "the consolidation rule activates with three coupled updates:",
         styles['Body']))
-    flow.extend(eq(r"p_{t+1} \leftarrow (1-\alpha)p_{t+1} + \alpha\pi_t"))
+    flow.extend(eq(r"\psi_{t+1}\leftarrow \mathrm{reshape}_{\pi_t,\alpha}(\psi_{t+1})"))
     flow.extend(eq(r"b_{t+1} \leftarrow \mathrm{clip}(b_t + \beta,\; 0,\; 1)"))
     flow.extend(eq(
         r"E_{t+1} \leftarrow \mathrm{clip}\!\left(E_{t+1} - \frac{B_{\mathrm{erase}}}"
@@ -1342,7 +1349,10 @@ def build_part_iv():
         "is the erased bit-equivalent count. <b>Interpretation:</b> When the "
         "system can no longer afford full operation, it retrieves from memory "
         "by erasing open alternatives. That erasure does not mint energy; it "
-        "spends the Landauer minimum required by the semantic entropy removed.",
+        "spends the Landauer minimum required by the semantic entropy removed. "
+        "In ZOMBIE mode the finite microcell selector applies largest-remainder "
+        "quantization to &psi;, so fractional route alternatives are forced "
+        "onto exact N<sub>bit-eq</sub> microcell counts.",
         styles['Body']))
 
     # Section 7: Closure Theorems
@@ -1406,7 +1416,7 @@ def build_part_iv():
     flow.append(Paragraph("7.4 Information Closure", styles['H2']))
     flow.append(theorem(
         "<b>Closure Principle 4 (Information Closure).</b> The route cost L<sub>t</sub> "
-        "is the single bookkeeping currency across all five physical bridges. "
+        "is the single bookkeeping currency across all six physical bridges. "
         "No additional currency is introduced in any bridge."))
 
     # Section 8: Action floor derivation
@@ -1626,7 +1636,9 @@ def build_part_v():
         r"D_{t+1} \leq \kappa_t D_t + \xi_t, \quad \kappa_t \in [0,1], \quad \xi_t \geq 0"))
     flow.append(Paragraph(
         "Moreover, in a stationary regime the fixed-point dispersion "
-        "satisfies D* = &xi;*/(1 &minus; &kappa;*).",
+        "satisfies D* = &xi;*/(1 &minus; &kappa;*). In v5.5 this theorem is "
+        "read as a bridge-level diagnostic of the projected coherence "
+        "observable c<sub>t</sub>; the native runtime carrier is &psi;.",
         styles['Body']))
     flow.append(proof(
         "<b>Proof.</b> From c<sub>t+1</sub> = &kappa;<sub>t</sub> c<sub>t</sub> + "
@@ -2155,6 +2167,48 @@ def build_part_vi():
                                        "transfer-level plausible but not yet a statistical "
                                        "victory."))
 
+    flow.append(Paragraph("23.7 Bridge 6: Born-Compatible Distribution Bridge",
+                          styles['H2']))
+    flow.append(theorem(
+        "<b>Conditional Bridge Result (Born-Compatible Distribution).</b> Given "
+        "a complex carrier &psi;<sub>i</sub>, exact finite microcell capacity "
+        "N<sub>bit-eq</sub>, and no-label exchangeability in the ZOMBIE "
+        "selector, the finite FPM distribution satisfies "
+        "P<sub>FPM</sub>(i) &asymp; |&psi;<sub>i</sub>|<sup>2</sup> / "
+        "&sum;<sub>j</sub>|&psi;<sub>j</sub>|<sup>2</sup> up to exact "
+        "microcell quantization."))
+    flow.append(Paragraph(
+        "The bridge adds the following conditional link to the master chain:",
+        styles['Body']))
+    flow.extend(eq(
+        r"R_{ij}\rightarrow \mathcal{L}_{i,t}\rightarrow \psi_i\rightarrow "
+        r"n_i\rightarrow P_{\mathrm{FPM}}(i)"))
+    flow.extend(eq(
+        r"p_i=\frac{|\psi_i|^2}{\sum_j|\psi_j|^2},\qquad "
+        r"n_i=\mathrm{LRM}(N_{\mathrm{bit\text{-}eq}}p_i),\qquad "
+        r"P_{\mathrm{FPM}}(i)=\frac{n_i}{N_{\mathrm{bit\text{-}eq}}}"))
+    flow.append(derivation(
+        "<b>Route-cost phase invariance.</b> The route-cost phase update "
+        "&psi;<sub>i,t+1</sub> = &psi;<sub>i,t</sub> exp(&minus;i&theta; "
+        "L<sub>i,t</sub>) preserves |&psi;<sub>i</sub>|<sup>2</sup>, so it "
+        "does not change the distribution."))
+    flow.append(derivation(
+        "<b>Exchangeability condition.</b> A2 forbids paid label-dependent "
+        "bias, but it does not by itself create randomness. The missing "
+        "theorem is therefore explicit: ZOMBIE no-label exchangeability "
+        "implies a uniform finite microcell selector. Parent-route bias costs "
+        "ceil(log<sub>2</sub>9)c<sub>0</sub> = 0.20, which already "
+        "exceeds E<sub>zombie</sub> = 0.133333; targeted microcell bias costs "
+        "ceil(log<sub>2</sub> N_bit-eq)c<sub>0</sub> = 1.55."))
+    flow.append(result_box(
+        "<b>Result:</b> The Born-compatible bridge is codified as a conditional "
+        "distribution mechanism. It does <i>not</i> prove that quantum "
+        "probability is non-fundamental. It supports the narrower claim: given "
+        "complex carrier, finite microcell counting, and no-label "
+        "exchangeability, P(i) approximates |&psi;<sub>i</sub>|<sup>2</sup>. "
+        "Formal audit: max D<sub>TV</sub> &lt; 2&times;10<sup>-8</sup>, "
+        "route-cost phase delta &lt; 10<sup>-12</sup>."))
+
     return flow
 
 
@@ -2331,7 +2385,7 @@ def build_part_viii():
 
     flow.append(Paragraph("27. Numerical Validation Summary", styles['H1']))
     flow.append(Paragraph(
-        "Eleven numerical experiments plus the 8b starvation subtest validate "
+        "Twelve numerical experiments plus the 8b starvation subtest validate "
         "the framework&rsquo;s core mechanisms. Each experiment tests a single "
         "mechanism in isolation, with explicit pass/fail criteria defined a priori.",
         styles['Body']))
@@ -2375,6 +2429,9 @@ def build_part_viii():
         ('11', 'N_bit_eq integer audit', 'Exact lattice count',
          '1,452,997,909',
          'PASS'),
+        ('12', 'Born distribution bridge', 'max D_TV',
+         '< 2e-8',
+         'PASS'),
     ]
     for row in exp_data:
         exp_rows.append(list(row))
@@ -2382,7 +2439,7 @@ def build_part_viii():
     flow.append(make_table(exp_rows,
                            col_widths=[0.8*cm, 4.0*cm, 3.5*cm, 3.5*cm, 3.2*cm],
                            font_size=8.5))
-    flow.append(Paragraph("Table 2. Summary of numerical validation. Eleven primary "
+    flow.append(Paragraph("Table 2. Summary of numerical validation. Twelve primary "
                           "experiments plus the 8b starvation subtest; all internal "
                           "criteria pass, while Experiment 10 is the SPARC R2 audit "
                           "and is not yet competitive with fixed RAR/MOND.",
@@ -2420,7 +2477,7 @@ def build_part_ix():
         "Every arrow is a derived mapping; no arrow is a postulate. The "
         "chain starts at the routing tensor and ends at the cosmological "
         "horizon, passing through the viscosity field, the per-tick "
-        "Lagrangian, the closed energy ledger, and the coherence dynamics "
+        "Lagrangian, the closed energy ledger, and the native carrier dynamics "
         "on the way.",
         styles['Body']))
 
@@ -2428,7 +2485,7 @@ def build_part_ix():
     flow.extend(eq(
         r"\mathrm{substrate:}\;\mathcal{R}_{ij} \to "
         r"\mathrm{mobility:}\;(S_9, K_1) \to \Phi_\Omega \to "
-        r"\mathrm{ambiguity:}\;\mathbf{p}_t \to (H_N, S_N) \to A_N \to C_N \to "
+        r"\mathrm{carrier:}\;\psi_t \to \mathbf{p}_t=|\psi_t|^2 \to (H_N, S_N) \to A_N \to C_N \to "
         r"\mathrm{viscosity:}\;\kappa_t \to \Omega_t",
         fontsize=10.5))
     flow.extend(eq(
@@ -2437,8 +2494,9 @@ def build_part_ix():
         r"\mathrm{ledger:}\;E_{t+1} = \mathrm{clip}(E_t - \mathcal{L}_t + r, 0, E_{\max})",
         fontsize=10.5))
     flow.extend(eq(
-        r"\to \mathrm{state:}\;(D_{t+1}, p_{t+1}, b_{t+1}) \to "
-        r"\mathrm{bridges:}\;\{\mathrm{Lindblad,\ Landauer,\ Gravity,\ Time,\ CMB}\}",
+        r"\to \mathrm{carrier:}\;\psi_{i,t+1}=\psi_{i,t}e^{-i\theta L_{i,t}} \to "
+        r"\mathrm{state:}\;(D_{t+1}, p_{t+1}, b_{t+1}) \to "
+        r"\mathrm{bridges:}\;\{\mathrm{Lindblad,\ Landauer,\ Gravity,\ Time,\ CMB,\ Born}\}",
         fontsize=10.5))
     flow.append(Paragraph(
         "This is the framework&rsquo;s master chain. Every variable on the "
@@ -2458,7 +2516,7 @@ def build_part_ix():
          'Landauer debit saturates; no hidden recovery'],
         ['Angular momentum', 'Closed integral A_{ij} dS^j = 0',
          'Torsion pure gauge; Noether preserved'],
-        ['Information', 'All 5 bridges are functions of L_t',
+        ['Information', 'All 6 bridges are functions of L_t',
          'Single bookkeeping currency across all sectors'],
     ]
     flow.append(make_table(closure_table,
@@ -2513,12 +2571,12 @@ def build_part_ix():
     # Section 30: Final Verdict
     flow.append(Paragraph("30. Final Verdict", styles['H1']))
     flow.append(Paragraph(
-        "Finite Possibility Mechanics v5.4 is a candidate mathematical "
+        "Finite Possibility Mechanics v5.5 is a candidate mathematical "
         "framework that models the dynamics of any system processing "
         "information under finite resources. This single self-contained "
         "paper has presented the framework&rsquo;s five axioms, derived every "
         "constant inline (zero fitted parameters), proven its theorems, "
-        "built the five physical bridges, calibrated to fundamental "
+        "built the six physical bridges, calibrated to fundamental "
         "constants, and tested the framework through eleven numerical "
         "experiments plus a starvation subtest.",
         styles['Body']))
@@ -2547,7 +2605,8 @@ def build_part_ix():
         "redshift ceiling &gamma;<sub>max</sub> = 31.87, the R2-extended "
         "split-source galaxy source functional, the CMB source spectrum "
         "with derived visibility. It is <b>not</b> a fundamental physical "
-        "theory: it cannot replace quantum mechanics (no Born rule), cannot "
+        "theory: it cannot replace quantum mechanics (Born bridge conditional "
+        "on exchangeability rather than a complete measurement theory), cannot "
         "replace general relativity (acoustic metric rather than Einstein "
         "field equations by postulate), and cannot derive all its "
         "load-bearing constants from first principles (the AxCore "
@@ -2559,7 +2618,7 @@ def build_part_ix():
     flow.append(callout(
         "<b>Final assessment:</b> The framework&rsquo;s value lies in its "
         "interpretive power and its falsifiable predictions, both of which "
-        "are on clearer mathematical footing after the v5.4 ledger-boundary update. "
+        "are on clearer mathematical footing after the v5.5 Born-bridge codification. "
         "Its empirical fate now depends on the next independent validations: "
         "CMB post-marginalization, the Sgr A* S2 redshift test, and an "
         "R2-extended derivation of the split-source source functional "
@@ -2646,8 +2705,9 @@ def build_part_x():
         ['S_9', 'RMS directed shear aggregate', '>= 0'],
         ['K_1', 'Trace curvature channel', '>= 0'],
         ['Phi_Omega', 'Mobility = (1+K_1)^{1/5}/(1+S_9)^{9/5}', '> 0'],
-        ['p_t', 'Routing probability', '[0, 1]'],
-        ['c_t', 'Complex coherence amplitude', 'C'],
+        ['psi_t', 'Native 9-channel complex carrier', 'C^9'],
+        ['p_t', 'Routing probability derived from |psi_t|^2', '[0, 1]'],
+        ['c_t', 'Projected complex coherence observable derived from psi_t', 'C'],
         ['D_t = 2|c_t|', 'Dispersion', '[0, infty)'],
         ['E_t', 'Energy budget', '[0, E_max]'],
         ['E_exhaust', 'Thermal exhaust from upper clipping boundary', '>= 0'],
@@ -2667,6 +2727,9 @@ def build_part_x():
         ['gamma_max = 31.87', 'Finite lag ceiling', 'dimensionless'],
         ['alpha_PP = 702.628349', 'Point-Pair coefficient', 'dimensionless'],
         ['N_{bit-eq} = 1,452,997,909', 'Exact bit-equivalent substrate capacity', 'bits'],
+        ['psi_i', 'Complex carrier amplitude for Born-compatible bridge', 'C'],
+        ['n_i', 'Largest-remainder microcell count for state i', 'integer'],
+        ['P_FPM(i)', 'Finite-substrate distribution n_i / N_bit-eq', '[0, 1]'],
         ['a_cap = c H_Lambda / (2 pi)', 'Holographic horizon capacity', 'm/s^2'],
         ['B = g_bar / a_cap', 'Baryonic load', 'dimensionless'],
         ['e_eff(B) = max((1+B)^(-3/4), e_floor)', 'Causal energy depletion', '[e_floor, 1]'],
@@ -2682,7 +2745,7 @@ def build_part_x():
     ]
     flow.append(make_table(sym_rows, col_widths=[4.5*cm, 6.5*cm, 4.0*cm],
                            font_size=8.5))
-    flow.append(Paragraph("Table 5. Master symbol reference for FPM v5.4.",
+    flow.append(Paragraph("Table 5. Master symbol reference for FPM v5.5.",
                           styles['Caption']))
 
     # Appendix C: Verification Summary
@@ -2724,9 +2787,9 @@ def build_document():
         output_path, pagesize=A4,
         leftMargin=2.0 * cm, rightMargin=2.0 * cm,
         topMargin=2.5 * cm, bottomMargin=2.5 * cm,
-        title="Finite Possibility Mechanics v5.4: The Complete Unified Paper",
+        title="Finite Possibility Mechanics v5.5: The Complete Unified Paper",
         author=AUTHOR_NAME,
-        subject="FPM v5.4: Complete Unified Paper with inline derivations",
+        subject="FPM v5.5: Complete Unified Paper with inline derivations",
     )
 
     story = []

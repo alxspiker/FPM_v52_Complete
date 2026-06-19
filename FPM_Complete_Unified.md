@@ -1,4 +1,4 @@
-# Finite Possibility Mechanics v5.4
+# Finite Possibility Mechanics v5.5
 ## The Complete Unified Paper
 
 **Alx Spiker · Edmonton, Alberta, Canada**
@@ -8,7 +8,7 @@
 
 ## Abstract
 
-Finite Possibility Mechanics (FPM) is a candidate mathematical framework that models any system processing information under finite resources. This **single self-contained paper** presents the framework in full: it states the five axioms, derives every constant inline (zero fitted parameters, zero asserted calibration factors), proves the six theorems, builds the five physical bridges, calibrates to fundamental constants, and validates the framework through eleven numerical experiments plus a starvation subtest.
+Finite Possibility Mechanics (FPM) is a candidate mathematical framework that models any system processing information under finite resources. This **single self-contained paper** presents the framework in full: it states the five axioms, derives every constant inline (zero fitted parameters, zero asserted calibration factors), proves the six theorems, builds the six physical bridges, calibrates to fundamental constants, and validates the framework through twelve numerical experiments plus a starvation subtest.
 
 The framework is organized as a single causal chain: five axioms generate a directed routing ledger, the ledger produces a viscosity field through a constitutive law, the viscosity field gates a per-tick Lagrangian whose closed energy ledger drives coherence dynamics, and the resulting theorems bridge to Landauer dissipation, emergent gravity, time dilation, particle mass, holographic cosmology, the CMB acoustic oscillator, and a calibrated sub-atomic tick — all sharing one runtime currency, **route cost**.
 
@@ -68,6 +68,7 @@ The framework is organized as a single causal chain: five axioms generate a dire
 - §21 Bridge 3: Emergent Gravity from Viscosity Gradients
 - §22 Bridge 4: Time Dilation as Processor Lag
 - §23 Bridge 5: Holographic Horizon and CMB Oscillator
+  - §23.7 Bridge 6: Born-Compatible Distribution Bridge
   - 23.1 The Holographic Horizon Capacity
   - 23.2 The 16/3 Ledger Inertia Ratio (**derived inline**)
   - 23.3 The Stripped Boltzmann Oscillator
@@ -81,7 +82,7 @@ The framework is organized as a single causal chain: five axioms generate a dire
 - §26 Derivation of the AxCore-to-FPM Calibration Factor = 80 (**derived inline**)
 
 ### Part VIII: Numerical Validation
-- §27 Numerical Validation Summary (11 experiments plus 8b starvation subtest)
+- §27 Numerical Validation Summary (12 experiments plus 8b starvation subtest)
 
 ### Part IX: Master Chain & Open Frontiers
 - §28 The Master Chain Equation
@@ -148,12 +149,13 @@ The entire framework is a single causal chain:
 
 ```
 SUBSTRATE:  R_ij  →  (S_9, K_1)  →  Φ_Ω
-MOBILITY:   →  p_t  →  (H_N, S_N)  →  A_N  →  C_N
+CARRIER:    →  ψ_t  →  p_t = |ψ_t|²  →  ZOMBIE microcell quantization
+MOBILITY:   →  (H_N, S_N)  →  A_N  →  C_N
 VISCOSITY:  →  κ_t  →  Ω_t
 LAGRANGIAN: →  L_t = C^sem + C^geo + λ|ΔΩ_t|    (AxCore-derived)
 LEDGER:     →  E_{t+1} = clip(E_t - L_t + r, 0, E_max)
-STATE:      →  (D_{t+1}, p_{t+1}, b_{t+1})
-BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB}
+STATE:      →  ψ_{i,t+1}=ψ_{i,t} exp(-iθL_{i,t})  →  (D_{t+1}, p_{t+1}, b_{t+1})
+BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB, Born}
 ```
 
 ---
@@ -180,4 +182,4 @@ BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB}
 ---
 
 *Alx Spiker · Edmonton, Alberta, Canada*
-*FPM v5.4 · Complete Unified Paper · 18 June 2026*
+*FPM v5.5 · Complete Unified Paper · 18 June 2026*

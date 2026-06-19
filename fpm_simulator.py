@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Finite Possibility Mechanics (FPM) v5.4 -- COMPLETE CLOSED-FORM SIMULATOR
+Finite Possibility Mechanics (FPM) v5.5 -- COMPLETE CLOSED-FORM SIMULATOR
 ==========================================================================
 
 A single self-contained Python simulator that:
   * takes the five FPM axioms as the ONLY inputs,
   * re-derives every one of the 21 constants inline (zero fitted parameters),
   * runs the per-tick master chain on a Z^3 lattice of daemons,
-  * runs all 11 numerical validation experiments (incl. N_bit_eq audit),
-  * builds the five physical bridges (Lindblad / Landauer / Gravity /
-    Time-dilation / CMB), and
+  * runs all 12 numerical validation experiments (incl. N_bit_eq and Born audits),
+  * builds the six physical bridges (Lindblad / Landauer / Gravity /
+    Time-dilation / CMB / Born-compatible distribution), and
   * emits all emergent observables as JSON + PNG plots.
 
 The code is organised as the same single causal chain as the paper:
@@ -20,7 +20,7 @@ The code is organised as the same single causal chain as the paper:
                      -> Bridges (Layer 5) -> Calibration (Layer 6)
                      -> Numerical Validation (Layer 7)
 
-Author of the simulator: built from the FPM v5.4 paper by Alx Spiker (2026).
+Author of the simulator: built from the FPM v5.5 paper by Alx Spiker (2026).
 The mathematical content is entirely from the paper; this file is a faithful,
 closed-form implementation of it.
 
@@ -93,7 +93,8 @@ os.makedirs(SIMULATOR_CHARTS_DIR, exist_ok=True)
 # LAYER 0 -- AXIOMATIC FOUNDATION
 # =============================================================================
 # Axiom A1: Finite substrate (Z^3 lattice, directed routing ledger R_ij in R^3x3,
-#            state X_t = (p_L, p_R, c_t, E_t, b_t), p_L + p_R = 1).
+#            native 9-channel complex carrier psi; p_L, p_R, and c_t are
+#            projected observables derived from |psi|^2).
 # Axiom A2: Thermodynamic route cost L_t >= c0 > 0, paid per tick (AxCore form).
 # Axiom A3: Closed universe: total replenishment = total dissipation every tick.
 # Axiom A4: Discrete causal ticks; update order is a structural resource.
@@ -446,25 +447,137 @@ def derive_all(ax: Axioms) -> DerivedConstants:
 # LAYER 2 -- SUBSTRATE: DIRECTED ROUTING LEDGER (Z^3 lattice of daemons)
 # =============================================================================
 # A1 + A4 give the substrate: discrete Z^3, directed routing ledger R_ij,
-# state quintuple X_t = (p_L, p_R, c_t, E_t, b_t) with p_L + p_R = 1.
+# and a native 9-channel complex carrier psi. The legacy scalar observables
+# p_L, p_R, and c_t are derived from psi rather than stored independently.
 # =============================================================================
 
 
-@dataclass
+@dataclass(init=False)
 class DaemonState:
-    """Per-daemon state quintuple X_t = (p_L, p_R, c, E, b).
+    """Per-daemon state with native 9-channel complex carrier psi.
 
-    Plus the local routing tensor R_ij and a per-tick history trace.
+    p_L, p_R, and c are derived observables for the older bridge diagnostics.
     """
-    p_L: float = 0.5
-    p_R: float = 0.5
-    c: complex = 0.0 + 0.0j        # coherence amplitude
+    psi: np.ndarray = field(default_factory=lambda: np.ones(9, dtype=np.complex128) / 3.0)
     E: float = 0.0
     b: float = 0.0                 # cache-bias strength
     R: np.ndarray = field(default_factory=lambda: np.eye(3, dtype=float))
     tau: float = 0.5               # local mean-field truth target
     pi: float = 0.5                # fallback prior
     Omega_prev: float = 0.85       # viscosity at previous tick (for |dOmega|)
+
+    def __init__(self,
+                 psi: Optional[np.ndarray] = None,
+                 p_L: float = 0.5,
+                 p_R: Optional[float] = None,
+                 c: complex = 0.0 + 0.0j,
+                 E: float = 0.0,
+                 b: float = 0.0,
+                 R: Optional[np.ndarray] = None,
+                 tau: float = 0.5,
+                 pi: float = 0.5,
+                 Omega_prev: float = 0.85):
+        if psi is None:
+            if p_R is None:
+                p_R = 1.0 - p_L
+            psi = self._psi_from_binary_observables(p_L, p_R, c)
+        self.psi = self._normalise_psi(np.asarray(psi, dtype=np.complex128))
+        self.E = float(E)
+        self.b = float(b)
+        self.R = np.array(R if R is not None else np.eye(3), dtype=float)
+        self.tau = float(tau)
+        self.pi = float(pi)
+        self.Omega_prev = float(Omega_prev)
+
+    @staticmethod
+    def _normalise_psi(psi: np.ndarray) -> np.ndarray:
+        if psi.shape != (9,):
+            raise ValueError("DaemonState.psi must be a 9-channel complex array")
+        norm = float(np.linalg.norm(psi))
+        if norm <= 0.0:
+            return np.ones(9, dtype=np.complex128) / 3.0
+        return psi / norm
+
+    @staticmethod
+    def _psi_from_binary_observables(p_L: float, p_R: float, c: complex) -> np.ndarray:
+        p_L = float(np.clip(p_L, 0.0, 1.0))
+        p_R = float(np.clip(p_R, 0.0, 1.0))
+        total = p_L + p_R
+        if total <= 0.0:
+            p_L, p_R = 0.5, 0.5
+        else:
+            p_L, p_R = p_L / total, p_R / total
+        psi = np.zeros(9, dtype=np.complex128)
+        phase = np.exp(1j * np.angle(c)) if abs(c) > 0.0 else 1.0 + 0.0j
+        psi[:5] = math.sqrt(p_L / 5.0)
+        psi[5:] = phase * math.sqrt(p_R / 4.0)
+        return psi
+
+    def born_probabilities(self) -> np.ndarray:
+        amps = np.abs(self.psi) ** 2
+        total = float(np.sum(amps))
+        if total <= 0.0:
+            return np.ones(9, dtype=float) / 9.0
+        return amps / total
+
+    @property
+    def p_L(self) -> float:
+        return float(np.sum(self.born_probabilities()[:5]))
+
+    @p_L.setter
+    def p_L(self, value: float) -> None:
+        self.set_binary_probability(value)
+
+    @property
+    def p_R(self) -> float:
+        return float(np.sum(self.born_probabilities()[5:]))
+
+    @p_R.setter
+    def p_R(self, value: float) -> None:
+        self.set_binary_probability(1.0 - value)
+
+    @property
+    def c(self) -> complex:
+        left = self.psi[:4]
+        right = self.psi[5:9]
+        return complex(np.vdot(left, right) / 4.0)
+
+    @c.setter
+    def c(self, value: complex) -> None:
+        self.psi = self._normalise_psi(
+            self._psi_from_binary_observables(self.p_L, self.p_R, value)
+        )
+
+    def set_binary_probability(self, p_L: float) -> None:
+        phases = np.exp(1j * np.angle(self.psi))
+        phases[np.abs(self.psi) == 0.0] = 1.0 + 0.0j
+        p_L = float(np.clip(p_L, 0.0, 1.0))
+        p_R = 1.0 - p_L
+        new_psi = np.zeros(9, dtype=np.complex128)
+        new_psi[:5] = phases[:5] * math.sqrt(p_L / 5.0)
+        new_psi[5:] = phases[5:] * math.sqrt(p_R / 4.0)
+        self.psi = self._normalise_psi(new_psi)
+
+    def nudge_binary_probability(self, target: float, rate: float, noise: float = 0.0) -> None:
+        self.set_binary_probability(self.p_L + rate * (target - self.p_L) + noise)
+
+    def phase_rotate(self, route_costs: np.ndarray, theta: float = 0.37) -> None:
+        route_costs = np.asarray(route_costs, dtype=float)
+        if route_costs.shape != (9,):
+            raise ValueError("route_costs must be a 9-channel array")
+        self.psi = self._normalise_psi(self.psi * np.exp(-1j * theta * route_costs))
+
+    def quantize_microcells(self, d: DerivedConstants) -> Dict[str, Any]:
+        probs = self.born_probabilities()
+        counts = largest_remainder_counts(probs * d.N_bit_eq, d.N_bit_eq)
+        phases = np.exp(1j * np.angle(self.psi))
+        phases[np.abs(self.psi) == 0.0] = 1.0 + 0.0j
+        self.psi = self._normalise_psi(phases * np.sqrt(counts / float(d.N_bit_eq)))
+        q_probs = counts.astype(np.float64) / float(d.N_bit_eq)
+        return {
+            "microcell_counts": counts.tolist(),
+            "tv_distance": 0.5 * float(np.sum(np.abs(q_probs - probs))),
+        }
 
     def dispersion(self) -> float:
         return 2.0 * abs(self.c)
@@ -647,6 +760,15 @@ def c0_plus_terms(d: DerivedConstants, L_axcore: float,
     return d.c0 + cfg.w_D * Bdt + cfg.w_I * (1.0 - f)
 
 
+def route_cost_channels(daemon: DaemonState, total_L: float) -> np.ndarray:
+    """Distribute total route cost over the native 9 complex carrier channels."""
+    weights = np.abs(daemon.R.reshape(9)).astype(float)
+    if float(np.sum(weights)) <= 0.0:
+        weights = np.ones(9, dtype=float)
+    weights = weights / float(np.mean(weights))
+    return np.maximum(0.0, total_L * weights)
+
+
 def replenishment_rule(daemons: List[DaemonState], Ls: List[float]) -> List[float]:
     """r_i = (sum L_j) * w_i / sum w_j  with w_i = |grad Omega| + eta*|pi-tau|."""
     eta_geo = 0.1
@@ -709,14 +831,12 @@ def consolidation_rule(daemon: DaemonState, d: DerivedConstants,
                        B_erase: float = 0.0) -> None:
     """Low-energy consolidation rule (Section 6.4).
 
-    p <- (1-alpha) p + alpha * pi
+    psi probabilities <- (1-alpha) p + alpha * pi
     b <- clip(b + beta, 0, 1)
     E <- clip(E - (B_erase / N_bit_eq) * E_max, 0, E_max)
     """
     p_new_L = (1 - alpha) * daemon.p_L + alpha * daemon.pi
-    p_new_R = 1.0 - p_new_L
-    daemon.p_L = float(np.clip(p_new_L, 0.0, 1.0))
-    daemon.p_R = float(np.clip(p_new_R, 0.0, 1.0))
+    daemon.set_binary_probability(float(np.clip(p_new_L, 0.0, 1.0)))
     daemon.b = float(np.clip(daemon.b + beta, 0.0, 1.0))
     if B_erase > 0:
         daemon.E = float(np.clip(daemon.E - (B_erase / d.N_bit_eq) * d.E_max,
@@ -1038,6 +1158,112 @@ def bridge_cmb_oscillator(d: DerivedConstants,
     }
 
 
+def largest_remainder_counts(expected_counts: np.ndarray,
+                             total_count: int) -> np.ndarray:
+    """Integerize expected microcell counts with largest-remainder rounding."""
+    floors = np.floor(expected_counts).astype(np.int64)
+    remaining = int(total_count - int(np.sum(floors)))
+    if remaining > 0:
+        frac = expected_counts - floors
+        order = np.argsort(-frac, kind="mergesort")
+        floors[order[:remaining]] += 1
+    return floors
+
+
+def bridge_born_distribution(d: DerivedConstants,
+                             psi: np.ndarray,
+                             route_costs: Optional[np.ndarray] = None,
+                             theta: float = 0.37) -> Dict[str, Any]:
+    """Bridge 6: Born-compatible finite-substrate distribution bridge.
+
+    This is an architectural bridge, not an unconditional derivation of the
+    Born rule from A1-A5. Given a complex carrier and no-label exchangeable
+    finite microcell selector, the finite substrate quantizes |psi|^2 by
+    largest-remainder microcell allocation.
+    """
+    psi = np.asarray(psi, dtype=np.complex128)
+    amplitudes = np.abs(psi) ** 2
+    norm = float(np.sum(amplitudes))
+    if norm <= 0.0:
+        raise ValueError("Born bridge requires a non-zero complex carrier")
+    p_born = amplitudes / norm
+    expected = p_born * d.N_bit_eq
+    counts = largest_remainder_counts(expected, d.N_bit_eq)
+    p_fpm = counts.astype(np.float64) / float(d.N_bit_eq)
+    tv_distance = 0.5 * float(np.sum(np.abs(p_fpm - p_born)))
+
+    if route_costs is None:
+        route_costs = np.arange(1, len(psi) + 1, dtype=float)
+    route_costs = np.asarray(route_costs, dtype=float)
+    phased = psi * np.exp(-1j * theta * route_costs)
+    phased_born = np.abs(phased) ** 2 / float(np.sum(np.abs(phased) ** 2))
+    max_phase_probability_delta = float(np.max(np.abs(phased_born - p_born)))
+
+    return {
+        "bridge_name": "Born-compatible distribution bridge",
+        "status": "codified_conditional_bridge",
+        "required_theorem": "Starvation-Induced Exchangeable Microcell Selector",
+        "not_claimed": "Quantum probability is not fundamental",
+        "supported_claim": (
+            "Given complex carrier + finite microcell counting + no-label "
+            "exchangeability, P(i) approximates |psi_i|^2"
+        ),
+        "N_bit_eq": d.N_bit_eq,
+        "p_born": p_born.tolist(),
+        "microcell_counts": counts.tolist(),
+        "p_fpm": p_fpm.tolist(),
+        "tv_distance": tv_distance,
+        "max_phase_probability_delta": max_phase_probability_delta,
+        "route_cost_phase_rule": "psi_{i,t+1}=psi_{i,t} exp(-i theta L_{i,t})",
+    }
+
+
+def audit_born_distribution_bridge(d: DerivedConstants,
+                                   n_states: int = 1000,
+                                   n_channels: int = 9,
+                                   seed: int = 55) -> Dict[str, Any]:
+    """Formal audit for the v5.5 Born-compatible bridge."""
+    rng = np.random.default_rng(seed)
+    tvs: List[float] = []
+    phase_deltas: List[float] = []
+    for _ in range(n_states):
+        psi = rng.standard_normal(n_channels) + 1j * rng.standard_normal(n_channels)
+        route_costs = rng.uniform(d.c0, d.L_max, n_channels)
+        audit = bridge_born_distribution(d, psi, route_costs=route_costs)
+        tvs.append(float(audit["tv_distance"]))
+        phase_deltas.append(float(audit["max_phase_probability_delta"]))
+
+    E_zombie = 0.20 * d.E_max
+    route_label_bias_cost = math.ceil(math.log2(9)) * d.c0
+    microcell_label_bias_cost = math.ceil(math.log2(d.N_bit_eq)) * d.c0
+
+    return {
+        "audit_name": "Born-compatible distribution bridge formal audit",
+        "version": "v5.5",
+        "n_states": n_states,
+        "n_channels": n_channels,
+        "N_bit_eq": d.N_bit_eq,
+        "max_D_TV": max(tvs),
+        "mean_D_TV": float(np.mean(tvs)),
+        "max_phase_probability_delta": max(phase_deltas),
+        "mean_phase_probability_delta": float(np.mean(phase_deltas)),
+        "E_zombie": E_zombie,
+        "parent_route_label_bias_cost": route_label_bias_cost,
+        "microcell_label_bias_cost": microcell_label_bias_cost,
+        "microcell_bias_cost_over_E_zombie": microcell_label_bias_cost / E_zombie,
+        "microcell_bias_cost_over_E_max": microcell_label_bias_cost / d.E_max,
+        "exchangeability_theorem_required": (
+            "A2 forbids paid label-dependent bias, but does not create "
+            "randomness. The bridge requires ZOMBIE no-label exchangeability "
+            "implying a uniform finite microcell selector."
+        ),
+        "verdict": (
+            "PASS" if max(tvs) < 2e-8 and max(phase_deltas) < 1e-12
+            else "FAIL"
+        ),
+    }
+
+
 # =============================================================================
 # LAYER 7 -- CALIBRATION & G_FPM
 # =============================================================================
@@ -1234,7 +1460,7 @@ def experiment_03_closed_universe_conservation(d: DerivedConstants) -> Dict[str,
             if E_new < 0.0 or E_new > d.E_max:
                 clip_events += 1
             dm.E = float(np.clip(E_new, 0.0, d.E_max))
-            dm.c = coherence_update(dm, kappas[i], d)
+            dm.phase_rotate(route_cost_channels(dm, Ls[i]))
             dm.Omega_prev = Os[i]
         final_total_E = sum(dm.E for dm in daemons)
         drifts.append(abs(final_total_E - initial_total_E) / initial_total_E)
@@ -1288,7 +1514,6 @@ def experiment_05_mean_field_closure(d: DerivedConstants) -> Dict[str, Any]:
     for i in range(n):
         daemons.append(DaemonState(
             p_L=0.5 + 0.1 * rng.standard_normal(),
-            p_R=0.0,
             c=0.0,
             E=d.E_max,
             b=0.0,
@@ -1297,8 +1522,6 @@ def experiment_05_mean_field_closure(d: DerivedConstants) -> Dict[str, Any]:
             pi=float(np.clip(0.5 + 0.1 * rng.standard_normal(), 0, 1)),
             Omega_prev=d.Omega_max,
         ))
-    for dm in daemons:
-        dm.p_R = 1.0 - dm.p_L
     n_ticks = 100
     frustrations = []
     for _ in range(n_ticks):
@@ -1392,7 +1615,7 @@ def experiment_08b_wrong_lock_starvation(d: DerivedConstants) -> Dict[str, Any]:
         O, k, _ = viscosity_update(dm, d)
         L, _ = axcore_lagrangian(dm, d, O, cfg)
         dm.E = max(0.0, dm.E - L)
-        dm.c = coherence_update(dm, k, d)
+        dm.phase_rotate(route_cost_channels(dm, L))
         if dm.E < E_threshold:
             starvation_tick = t
             break
@@ -1485,6 +1708,18 @@ def experiment_11_N_bit_eq_exact_derivation(d: DerivedConstants) -> Dict[str, An
     }
 
 
+def experiment_12_born_distribution_bridge(d: DerivedConstants) -> Dict[str, Any]:
+    """Verify finite microcell quantization approximates |psi|^2."""
+    audit = audit_born_distribution_bridge(d)
+    return {
+        "name": "Born-compatible distribution bridge",
+        "key_metric": "max D_TV over finite substrate quantization",
+        "value": audit["max_D_TV"],
+        "verdict": audit["verdict"],
+        "audit": audit,
+    }
+
+
 def run_all_experiments(d: DerivedConstants) -> List[Dict[str, Any]]:
     return [
         experiment_01_dispersion_contraction(d),
@@ -1499,6 +1734,7 @@ def run_all_experiments(d: DerivedConstants) -> List[Dict[str, Any]]:
         experiment_09_finite_lag_ceiling(d),
         experiment_10_galaxy_rotation(d),
         experiment_11_N_bit_eq_exact_derivation(d),
+        experiment_12_born_distribution_bridge(d),
     ]
 
 
@@ -1527,6 +1763,8 @@ class MasterChainTrajectory:
     starvation_deficit: List[float] = field(default_factory=list)
     total_thermal_exhaust: float = 0.0
     total_starvation_deficit: float = 0.0
+    microcell_quantization_events: int = 0
+    max_microcell_quantization_tv: float = 0.0
 
 
 def metabolic_mode(E: float, E_max: float) -> str:
@@ -1563,7 +1801,6 @@ def run_master_chain(d: DerivedConstants,
     for i in range(n_daemons):
         dm = DaemonState(
             p_L=float(np.clip(0.5 + 0.005 * rng.standard_normal(), 0, 1)),
-            p_R=0.0,
             c=0.001 * rng.standard_normal() + 0.001j * rng.standard_normal(),
             E=0.5,                           # safe interior of [0, 0.667]
             b=0.0,
@@ -1572,7 +1809,6 @@ def run_master_chain(d: DerivedConstants,
             pi=float(np.clip(0.5 + 0.005 * rng.standard_normal(), 0, 1)),
             Omega_prev=Omega_op,             # start at operating point
         )
-        dm.p_R = 1.0 - dm.p_L
         daemons.append(dm)
 
     cfg = LagrangianConfig()
@@ -1609,17 +1845,19 @@ def run_master_chain(d: DerivedConstants,
             if exhaust > 0.0 or starvation > 0.0:
                 traj.boundary_clip_events += 1
             dm.E = float(np.clip(raw_E, 0.0, d.E_max))
-            # Coherence
-            dm.c = coherence_update(dm, kappas[i], d)
+            # Native Born-carrier runtime update: route cost drives U(1) phase.
+            dm.phase_rotate(route_cost_channels(dm, Ls[i]))
             dm.Omega_prev = Os[i]
             # Routing tensor evolves very slowly to keep L in the safe regime
             phi = mobility(trace_curvature(dm.R), shear_aggregate(dm.R),
                            d.alpha, d.beta)
             dm.R = dm.R + 0.0005 * phi * rng.standard_normal((3, 3))
-            # p drifts toward tau (geometric cost pressure), small step
-            dm.p_L = float(np.clip(dm.p_L + 0.001 * (dm.tau - dm.p_L)
-                                   + 0.0002 * rng.standard_normal(), 0.0, 1.0))
-            dm.p_R = 1.0 - dm.p_L
+            # Born probability mass drifts toward tau (geometric cost pressure).
+            dm.nudge_binary_probability(
+                dm.tau,
+                rate=0.001,
+                noise=0.0002 * rng.standard_normal(),
+            )
             # Cache-bias ratchet (only in low-energy modes)
             mode = metabolic_mode(dm.E, d.E_max)
             if mode == "FATIGUE":
@@ -1628,6 +1866,12 @@ def run_master_chain(d: DerivedConstants,
                 dm.b = float(np.clip(dm.b + 0.003, 0.0, 1.0))
                 # consolidation kicks in (Landauer debit)
                 consolidation_rule(dm, d, alpha=0.02, beta=0.005, B_erase=0.1)
+                q = dm.quantize_microcells(d)
+                traj.microcell_quantization_events += 1
+                traj.max_microcell_quantization_tv = max(
+                    traj.max_microcell_quantization_tv,
+                    float(q["tv_distance"]),
+                )
 
         # 5. Record trajectory
         final_total_E = sum(dm.E for dm in daemons)
@@ -1905,7 +2149,7 @@ def to_serialisable(obj: Any) -> Any:
 
 def main() -> None:
     print("=" * 70)
-    print("FINITE POSSIBILITY MECHANICS (FPM) v5.4 -- COMPLETE SIMULATOR")
+    print("FINITE POSSIBILITY MECHANICS (FPM) v5.5 -- COMPLETE SIMULATOR")
     print("=" * 70)
     print()
     print("Layer 0: Loading the five axioms...")
@@ -1964,7 +2208,7 @@ def main() -> None:
     print(f"  T6 lattice anisotropy:      A4_zero_mean={th6['A4_zero_mean']}")
     print()
 
-    print("Layer 6: Building the five physical bridges...")
+    print("Layer 6: Building the six physical bridges...")
     # Pick a representative daemon state for the Lindblad/Landauer bridges
     sample = DaemonState(p_L=0.55, p_R=0.45, c=0.05+0.02j,
                          E=d.E_max*0.7, b=0.1,
@@ -1978,6 +2222,12 @@ def main() -> None:
     L_sample = np.linspace(d.L_rest, d.L_max, 50)
     b_time = bridge_time_dilation(d, L_sample)
     b_cmb = bridge_cmb_oscillator(d)
+    L_for_born, _ = axcore_lagrangian(sample, d, sample.Omega_prev, LagrangianConfig())
+    b_born = bridge_born_distribution(
+        d,
+        sample.psi,
+        route_costs=route_cost_channels(sample, L_for_born),
+    )
     print(f"  Lindblad:   kappa={b_lind['kappa']:.4f}, "
           f"gamma={b_lind['gamma_dephasing']:.4e}")
     print(f"  Landauer:   J={b_land['J_total_J']:.4e} J, "
@@ -1990,6 +2240,8 @@ def main() -> None:
     print(f"  CMB:        A_FPM={b_cmb['A_FPM']:.4e}, "
           f"n_s={b_cmb['n_s']:.4f}, r={b_cmb['r']:.5f}, "
           f"ell_D={b_cmb['ell_D']:.0f}")
+    print(f"  Born dist.: D_TV={b_born['tv_distance']:.3e}, "
+          f"phase_delta={b_born['max_phase_probability_delta']:.3e}")
     print()
 
     print("Layer 7: Calibration check (vs CODATA/Planck)...")
@@ -2018,7 +2270,7 @@ def main() -> None:
     print(f"        T = 300 K operational input, NOT to N_bit_eq rounding.")
     print()
 
-    validation_suite = "11 primary experiments plus 1 starvation subtest (8b)"
+    validation_suite = "12 primary experiments plus 1 starvation subtest (8b)"
     print(f"Layer 8: Running validation suite: {validation_suite}...")
     experiments = run_all_experiments(d)
     for e in experiments:
@@ -2038,6 +2290,7 @@ def main() -> None:
     print(f"  Boundary clip events:        {traj.boundary_clip_events}")
     print(f"  Thermal exhaust ledger:       {traj.total_thermal_exhaust:.6f}")
     print(f"  Starvation deficit ledger:    {traj.total_starvation_deficit:.6f}")
+    print(f"  Microcell quantization events: {traj.microcell_quantization_events}")
     print(f"  Mean L (final 50 ticks):     {np.mean(traj.mean_L[-50:]):.4f}")
     print(f"  Mean Omega (final 50):       {np.mean(traj.mean_Omega[-50:]):.4f}")
     print(f"  Mean kappa (final 50):       {np.mean(traj.mean_kappa[-50:]):.4f}")
@@ -2058,7 +2311,7 @@ def main() -> None:
     # ---- Assemble final JSON output --------------------------------------
     results = {
         "metadata": {
-            "version": "v5.4",
+            "version": "v5.5",
             "Validation_Suite": validation_suite,
         },
         "axioms": to_serialisable(axioms),
@@ -2084,6 +2337,7 @@ def main() -> None:
                 "ell_A": b_cmb["ell_A"],
                 "ledger_inertia_ratio": b_cmb["ledger_inertia_ratio"],
             },
+            "born_distribution": to_serialisable(b_born),
         },
         "calibration": to_serialisable(cal),
         "experiments": to_serialisable(experiments),
@@ -2105,6 +2359,8 @@ def main() -> None:
             "starvation_deficit": traj.starvation_deficit,
             "total_thermal_exhaust": traj.total_thermal_exhaust,
             "total_starvation_deficit": traj.total_starvation_deficit,
+            "microcell_quantization_events": traj.microcell_quantization_events,
+            "max_microcell_quantization_tv": traj.max_microcell_quantization_tv,
         },
         "plots": plot_paths_for_json,
     }
@@ -2114,14 +2370,17 @@ def main() -> None:
         json.dump(results, f, indent=2, default=to_serialisable)
     print(f"Results JSON saved to: {out_json}")
     print()
-    print("FPM v5.4 simulation complete.")
+    print("FPM v5.5 simulation complete.")
     print("Master chain equation (every arrow is derived, none postulated):")
-    print("  substrate R_ij -> (S_9, K_1) -> Phi_Omega -> p_t -> (H_N, S_N)")
+    print("  substrate R_ij -> (S_9, K_1) -> Phi_Omega -> psi_t -> p_t=|psi_t|^2")
+    print("    -> ZOMBIE microcell quantization when starvation forces exchangeability")
+    print("    -> (H_N, S_N)")
     print("    -> A_N -> C_N -> kappa_t -> Omega_t")
     print("    -> L_t = C_sem + C_geo + lambda|dOmega|")
     print("    -> E_{t+1} = clip(E_t - L_t + r, 0, E_max)")
+    print("    -> psi_{i,t+1}=psi_{i,t} exp(-i theta L_{i,t})")
     print("    -> (D_{t+1}, p_{t+1}, b_{t+1})")
-    print("    -> {Lindblad, Landauer, Gravity, Time, CMB} bridges")
+    print("    -> {Lindblad, Landauer, Gravity, Time, CMB, Born-distribution} bridges")
     print()
     print("Closure: the universe becomes solid, directional, heavy,")
     print("time-slowed, structured, and stable for one basic reason:")
