@@ -26,7 +26,7 @@ closed-form implementation of it.
 
 Outputs:
     ./fpm_results.json
-    ./fpm_*.png
+    ./simulator_charts/fpm_*.png
 """
 
 from __future__ import annotations
@@ -82,6 +82,11 @@ CERN_MUON_GAMMA = 29.3
 
 OUTPUT_DIR = os.environ.get("FPM_OUTPUT_DIR", os.getcwd())
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+SIMULATOR_CHARTS_DIR = os.environ.get(
+    "FPM_SIMULATOR_CHARTS_DIR",
+    os.path.join(OUTPUT_DIR, "simulator_charts"),
+)
+os.makedirs(SIMULATOR_CHARTS_DIR, exist_ok=True)
 
 
 # =============================================================================
@@ -1632,7 +1637,7 @@ def run_master_chain(d: DerivedConstants,
 
 def plot_all(d: DerivedConstants, axioms: Axioms,
              traj: MasterChainTrajectory,
-             out_dir: str = OUTPUT_DIR) -> Dict[str, str]:
+             out_dir: str = SIMULATOR_CHARTS_DIR) -> Dict[str, str]:
     """Generate all visualisation PNGs and return their paths."""
     paths: Dict[str, str] = {}
 
@@ -2013,6 +2018,10 @@ def main() -> None:
     for k, p in plot_paths.items():
         print(f"  {k:24s}: {p}")
     print()
+    plot_paths_for_json = {
+        k: os.path.relpath(p, OUTPUT_DIR).replace(os.sep, "/")
+        for k, p in plot_paths.items()
+    }
 
     # ---- Assemble final JSON output --------------------------------------
     results = {
@@ -2057,7 +2066,7 @@ def main() -> None:
             "metabolic_mode": traj.metabolic_mode,
             "closure_violations_energy": traj.closure_violations_energy,
         },
-        "plots": plot_paths,
+        "plots": plot_paths_for_json,
     }
 
     out_json = os.path.join(OUTPUT_DIR, "fpm_results.json")

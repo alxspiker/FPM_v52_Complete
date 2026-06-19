@@ -165,10 +165,11 @@ BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB}
 3. `generate_fpm_complete.py` — PDF generator script
 4. `fpm_simulator.py` — Closed-form simulator
 5. `fpm_results.json` — Generated simulator results
-6. `verify_derivations.py` — Verification script
-7. `generate_unified_charts.py` — Chart generator (10 figures)
-8. `unified_charts/` — Directory containing the 10 chart PNGs
-9. `README.md` — This file
+6. `simulator_charts/` — Generated simulator PNGs
+7. `verify_derivations.py` — Verification script
+8. `generate_unified_charts.py` — Chart generator (10 figures)
+9. `unified_charts/` — Directory containing the 10 chart PNGs
+10. `README.md` — This file
 
 ---
 
