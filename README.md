@@ -12,6 +12,8 @@ FPM_v52_Complete/
 ├── FPM_Complete_Unified.pdf                       # The single unified paper
 ├── FPM_Complete_Unified.md                        # Markdown summary
 ├── generate_fpm_complete.py                       # PDF generator script
+├── fpm_simulator.py                               # Closed-form simulator
+├── fpm_results.json                               # Generated simulator results
 ├── verify_derivations.py                          # Verification script
 ├── generate_unified_charts.py                     # Chart generator (10 figures)
 └── unified_charts/                                # Generated chart PNGs
@@ -43,7 +45,7 @@ Open `FPM_Complete_Unified.pdf` in any PDF reader. The document is organized int
 
 ### Run the verification
 ```bash
-python verify_v51_derivations.py
+python verify_derivations.py
 ```
 This runs all 9 derivation checks and prints a summary. All checks pass.
 
