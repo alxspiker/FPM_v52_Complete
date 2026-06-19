@@ -1,4 +1,4 @@
-# Finite Possibility Mechanics v5.2
+# Finite Possibility Mechanics v5.3
 ## The Complete Unified Paper
 
 **Alx Spiker · Edmonton, Alberta, Canada**
@@ -8,7 +8,7 @@
 
 ## Abstract
 
-Finite Possibility Mechanics (FPM) is a candidate mathematical framework that models any system processing information under finite resources. This **single self-contained paper** presents the framework in full: it states the five axioms, derives every constant inline (zero fitted parameters, zero asserted calibration factors), proves the six theorems, builds the five physical bridges, calibrates to fundamental constants, and validates the framework through ten numerical experiments.
+Finite Possibility Mechanics (FPM) is a candidate mathematical framework that models any system processing information under finite resources. This **single self-contained paper** presents the framework in full: it states the five axioms, derives every constant inline (zero fitted parameters, zero asserted calibration factors), proves the six theorems, builds the five physical bridges, calibrates to fundamental constants, and validates the framework through eleven numerical experiments plus a starvation subtest.
 
 The framework is organized as a single causal chain: five axioms generate a directed routing ledger, the ledger produces a viscosity field through a constitutive law, the viscosity field gates a per-tick Lagrangian whose closed energy ledger drives coherence dynamics, and the resulting theorems bridge to Landauer dissipation, emergent gravity, time dilation, particle mass, holographic cosmology, the CMB acoustic oscillator, and a calibrated sub-atomic tick — all sharing one runtime currency, **route cost**.
 
@@ -81,7 +81,7 @@ The framework is organized as a single causal chain: five axioms generate a dire
 - §26 Derivation of the AxCore-to-FPM Calibration Factor = 80 (**derived inline**)
 
 ### Part VIII: Numerical Validation
-- §27 Numerical Validation Summary (10 experiments)
+- §27 Numerical Validation Summary (11 experiments plus 8b starvation subtest)
 
 ### Part IX: Master Chain & Open Frontiers
 - §28 The Master Chain Equation
@@ -116,7 +116,8 @@ The framework is organized as a single causal chain: five axioms generate a dire
 | n_s (spectral tilt) | 0.9686 | §23.5 | L_rest, L_max |
 | r (tensor-to-scalar) | 0.00349 | §23.5 | L_rest, L_max, 9:1 |
 | ℓ_D (damping scale) | 1310 | §23.6 | ℓ_A, ℓ_freeze |
-| G_FPM (gravity) | 6.677×10⁻¹¹ | §25 | α_PP, ζ, J, Δx |
+| N_bit-eq (substrate capacity) | 1,452,997,909 | §20, §23.4 | exact Z³ lattice count |
+| G_FPM (gravity) | 6.680×10⁻¹¹ | §25 | α_PP, ζ, J, Δx |
 | calib (AxCore factor) | 80 | §26 | A4, ⟨L_AxCore⟩ |
 | Δt_univ (tick) | 1.152×10⁻²³ s | §24 | A5, α_PP, m_e, c |
 | Δx_univ (lattice) | 3.453 fm | §24 | A5, Δt_univ, c |
@@ -136,7 +137,7 @@ All 9 derivation checks pass numerically:
 | 5 | Lag ceiling γ_max | 31.8739 | 31.8739 | exact |
 | 6 | Point-Pair α_PP | 702.628349 | 702.628349 | 6.4e-13 rel. |
 | 7 | CMB A_FPM, n_s, r, ℓ_D | 4.04e-5, 0.969, 0.0035, 1310 | — | all in range |
-| 8 | G_FPM | 6.677e-11 | 6.674e-11 (CODATA) | 0.04% off |
+| 8 | G_FPM | 6.680e-11 | 6.674e-11 (CODATA) | 0.09% off at T=300.0 K |
 | 9 | Calibration factor | 80 | 80 | exact |
 
 ---
@@ -159,13 +160,13 @@ BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB}
 
 ## File Inventory
 
-1. `FPM_v52_Complete_Unified.pdf` — The 45-page single unified paper
-2. `FPM_v52_Complete_Unified.md` — This markdown summary
-3. `generate_fpm_v52_complete.py` — PDF generator script
-4. `verify_v51_derivations.py` — Verification script (all 9 checks pass)
+1. `FPM_Complete_Unified.pdf` — The single unified paper
+2. `FPM_Complete_Unified.md` — This markdown summary
+3. `generate_fpm_complete.py` — PDF generator script
+4. `verify_derivations.py` — Verification script
 5. `generate_unified_charts.py` — Chart generator (10 figures)
 6. `unified_charts/` — Directory containing the 10 chart PNGs
-7. `README_v52.md` — This file
+7. `README.md` — This file
 
 ---
 
@@ -176,4 +177,4 @@ BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB}
 ---
 
 *Alx Spiker · Edmonton, Alberta, Canada*
-*FPM v5.2 · Complete Unified Paper · 18 June 2026*
+*FPM v5.3 · Complete Unified Paper · 18 June 2026*

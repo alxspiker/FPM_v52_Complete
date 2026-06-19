@@ -1,18 +1,18 @@
-# FPM v5.2 — The Complete Unified Paper
+# FPM v5.3 — The Complete Unified Paper
 
 **Author:** Alx Spiker · Edmonton, Alberta, Canada
 **Date:** 18 June 2026
-**Version:** v5.2 — Complete Unified Paper (single document)
+**Version:** v5.3 — Complete Unified Paper (single document)
 
 ## What's in this package
 
 ```
 FPM_v52_Complete/
-├── README_v52.md                                  # This file
-├── FPM_v52_Complete_Unified.pdf                   # The 45-page single unified paper
-├── FPM_v52_Complete_Unified.md                    # Markdown summary
-├── generate_fpm_v52_complete.py                   # PDF generator script
-├── verify_v51_derivations.py                      # Verification script (9 checks)
+├── README.md                                      # This file
+├── FPM_Complete_Unified.pdf                       # The single unified paper
+├── FPM_Complete_Unified.md                        # Markdown summary
+├── generate_fpm_complete.py                       # PDF generator script
+├── verify_derivations.py                          # Verification script
 ├── generate_unified_charts.py                     # Chart generator (10 figures)
 └── unified_charts/                                # Generated chart PNGs
     ├── 01_master_chain.png
@@ -39,7 +39,7 @@ This is NOT two separate documents. It is ONE paper with 10 parts and 33 section
 ## Quick Start
 
 ### View the paper
-Open `FPM_v52_Complete_Unified.pdf` in any PDF reader. The document is 45 pages, organized into 10 parts (33 sections), with 10 figures and 6 tables.
+Open `FPM_Complete_Unified.pdf` in any PDF reader. The document is organized into 10 parts (33 sections), with 10 figures and 6 tables.
 
 ### Run the verification
 ```bash
@@ -51,7 +51,7 @@ This runs all 9 derivation checks and prints a summary. All checks pass.
 ```bash
 pip install reportlab matplotlib numpy pillow
 python generate_unified_charts.py    # Regenerates all 10 diagrams
-python generate_fpm_v52_complete.py  # Regenerates the PDF
+python generate_fpm_complete.py      # Regenerates the PDF
 ```
 
 ## Paper Structure (10 parts, 33 sections)
@@ -86,11 +86,11 @@ python generate_fpm_v52_complete.py  # Regenerates the PDF
 
 ### Part VII: Calibration & G_FPM (with full derivation inline)
 - §24 Derivation of the Universal Engine Tick
-- §25 Derivation of G_FPM (8-step derivation, 0.04% from CODATA)
+- §25 Derivation of G_FPM (8-step derivation, 0.09% from CODATA at T=300.0 K)
 - §26 Derivation of the AxCore-to-FPM Calibration Factor = 80
 
 ### Part VIII: Numerical Validation
-- §27 Ten experiments summary
+- §27 Eleven experiments summary plus 8b starvation subtest
 
 ### Part IX: Master Chain & Open Frontiers
 - §28 The Master Chain Equation
@@ -123,7 +123,8 @@ python generate_fpm_v52_complete.py  # Regenerates the PDF
 | n_s (spectral tilt) | 0.9686 | §23.5 |
 | r (tensor-to-scalar) | 0.00349 | §23.5 |
 | ℓ_D (damping scale) | 1310 | §23.6 |
-| G_FPM (gravity) | 6.677×10⁻¹¹ | §25 |
+| N_bit-eq (substrate capacity) | 1,452,997,909 | §20, §23.4 |
+| G_FPM (gravity) | 6.680×10⁻¹¹ | §25 |
 | calib (AxCore factor) | 80 | §26 |
 | Δt_univ (universal tick) | 1.152×10⁻²³ s | §24 |
 | Δx_univ (lattice constant) | 3.453 fm | §24 |
@@ -141,7 +142,7 @@ All 9 derivation checks pass:
 | 5 | Lag ceiling γ_max | 31.8739 | 31.8739 | exact |
 | 6 | Point-Pair α_PP | 702.628349 | 702.628349 | 6.4e-13 rel. |
 | 7 | CMB A_FPM, n_s, r, ℓ_D | 4.04e-5, 0.969, 0.0035, 1310 | — | all in range |
-| 8 | G_FPM | 6.677e-11 | 6.674e-11 (CODATA) | 0.04% off |
+| 8 | G_FPM | 6.680e-11 | 6.674e-11 (CODATA) | 0.09% off at T=300.0 K |
 | 9 | Calibration factor | 80 | 80 | exact |
 
 ## The Five Axioms (the only inputs)
@@ -160,16 +161,17 @@ All 9 derivation checks pass:
 
 - **v5.0** was the interpretive framework (what things mean) — 41 pages
 - **v5.1** was the pure derivation document (how things are proven) — 28 pages
-- **v5.2** (this) is the **single unified paper** that combines both, with all derivations inline where they belong — 45 pages
+- **v5.2** is the **single unified paper** that combines both, with all derivations inline where they belong
+- **v5.3** (this) replaces the continuous N_bit-eq approximation with the exact discrete Z^3 lattice-point count 1,452,997,909 and reports the resulting deterministic G_FPM variance at T=300.0 K
 
-The v5.2 paper is the definitive document. It contains everything from v5.0 and v5.1 in a single coherent narrative.
+The v5.3 paper is the definitive document. It contains everything from v5.0-v5.2 in a single coherent narrative.
 
 ## The Deepest Result
 
-The FPM v5.2 framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms. The framework's empirical engagements (SPARC, Planck, CODATA) are genuine tests of the axioms, not fits to data.
+The FPM v5.3 framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms. The framework's empirical engagements (SPARC, Planck, CODATA) are genuine tests of the axioms, not fits to data.
 
-**The 0.04% match to CODATA G, the 0.45% match to Planck dark-to-baryonic ratio, and the 0.54% match to Planck TT RMS are all derived predictions, not fitted parameters.**
+**The 0.09% deterministic match to CODATA G at T=300.0 K, the 0.45% match to Planck dark-to-baryonic ratio, and the 0.54% match to Planck TT RMS are all derived predictions, not fitted parameters.**
 
 ---
 
-*FPM v5.2 · Complete Unified Paper · 18 June 2026*
+*FPM v5.3 · Complete Unified Paper · 18 June 2026*
