@@ -1,8 +1,8 @@
-# FPM v5.3 — The Complete Unified Paper
+# FPM v5.4 — The Complete Unified Paper
 
 **Author:** Alx Spiker · Edmonton, Alberta, Canada
 **Date:** 18 June 2026
-**Version:** v5.3 — Complete Unified Paper (single document)
+**Version:** v5.4 — Complete Unified Paper (single document)
 
 ## Read the Paper
 
@@ -171,16 +171,17 @@ All 9 derivation checks pass:
 - **v5.0** was the interpretive framework (what things mean) — 41 pages
 - **v5.1** was the pure derivation document (how things are proven) — 28 pages
 - **v5.2** is the **single unified paper** that combines both, with all derivations inline where they belong
-- **v5.3** (this) replaces the continuous N_bit-eq approximation with the exact discrete Z^3 lattice-point count 1,452,997,909 and reports the resulting deterministic G_FPM variance at T=300.0 K
+- **v5.3** replaces the continuous N_bit-eq approximation with the exact discrete Z^3 lattice-point count 1,452,997,909 and reports the resulting deterministic G_FPM variance at T=300.0 K
+- **v5.4** (this) seals the depletion-floor, galaxy-boundary, and clipping-ledger audit leaks by distinguishing raw/effective e(B), making R_d an environmental boundary input, and tracking thermal exhaust/starvation deficit
 
-The v5.3 paper is the definitive document. It contains everything from v5.0-v5.2 in a single coherent narrative.
+The v5.4 paper is the definitive document. It contains everything from v5.0-v5.3 in a single coherent narrative.
 
 ## The Deepest Result
 
-The FPM v5.3 framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms. The framework's empirical engagements (SPARC, Planck, CODATA) are genuine tests of the axioms, not fits to data.
+The FPM v5.4 framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms or a conditional bridge evaluation with explicit environmental inputs. The framework's empirical engagements (SPARC, Planck, CODATA) are genuine tests of the axioms, not fits to data.
 
 **The 0.09% deterministic match to CODATA G at T=300.0 K, the 0.45% match to Planck dark-to-baryonic ratio, and the 0.54% match to Planck TT RMS are all derived predictions, not fitted parameters.**
 
 ---
 
-*FPM v5.3 · Complete Unified Paper · 18 June 2026*
+*FPM v5.4 · Complete Unified Paper · 18 June 2026*

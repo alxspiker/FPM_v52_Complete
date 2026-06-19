@@ -1,4 +1,4 @@
-# Finite Possibility Mechanics v5.3
+# Finite Possibility Mechanics v5.4
 ## The Complete Unified Paper
 
 **Alx Spiker · Edmonton, Alberta, Canada**
@@ -180,4 +180,4 @@ BRIDGES:    →  {Lindblad, Landauer, Gravity, Time, CMB}
 ---
 
 *Alx Spiker · Edmonton, Alberta, Canada*
-*FPM v5.3 · Complete Unified Paper · 18 June 2026*
+*FPM v5.4 · Complete Unified Paper · 18 June 2026*

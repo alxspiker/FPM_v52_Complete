@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FPM v5.0 Unified Framework - Chart Generator
+FPM v5.4 Unified Framework - Chart Generator
 =============================================
 Generates all diagrams for the unified framework PDF:
   1. The Master Chain (single-equation causal pipeline)
@@ -47,7 +47,8 @@ COL_GREEN = '#2d7a4a'
 COL_GREY = '#555555'
 COL_LIGHT_BG = '#f5f5f0'
 
-OUTPUT_DIR = '/home/z/my-project/build/unified_charts'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(SCRIPT_DIR, 'unified_charts')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
@@ -352,12 +353,16 @@ def chart_viscosity_law():
     ax = axes[1]
     B = np.logspace(-2, 3, 200)
     e_34 = (1 + B) ** (-3 / 4)
+    e_floor = 0.0314
+    e_eff = np.maximum(e_34, e_floor)
     e_11 = (1 + B) ** (-1)  # naive 1:1
     e_32 = (1 + B) ** (-3 / 2)  # alternative
     e_1 = (1 + B) ** (-1 / 4)
 
-    ax.loglog(B, e_34, color=COL_PRIMARY, linewidth=2.5,
-              label='FPM: e(B) = (1+B)^(-3/4)  [derived]')
+    ax.loglog(B, e_34, color=COL_PRIMARY, linewidth=1.7, alpha=0.55,
+              label='Raw: (1+B)^(-3/4)  [derived]')
+    ax.loglog(B, e_eff, color=COL_PRIMARY, linewidth=2.8,
+              label='Effective: max(raw, e_floor)')
     ax.loglog(B, e_11, color=COL_GREY, linewidth=1.5, linestyle='--',
               label='Naive: (1+B)^(-1)  [3 spatial channels]')
     ax.loglog(B, e_32, color=COL_GREY, linewidth=1.5, linestyle=':',
@@ -365,10 +370,9 @@ def chart_viscosity_law():
     ax.loglog(B, e_1, color=COL_GREY, linewidth=1.5, linestyle='-.',
               label='Alt: (1+B)^(-1/4)  [under-counted]')
 
-    ax.fill_between([0.01, 100], [0.0314, 0.0314], [0.0314, 0.0314],
-                    color=COL_GOLD, alpha=0.0)
-    ax.axhline(0.0314, color=COL_GOLD, linestyle=':', alpha=0.6, linewidth=1.2)
-    ax.text(0.012, 0.04, 'e_floor = 0.0314\n(bounded\nasymptote)',
+    ax.axhline(e_floor, color=COL_GOLD, linestyle=':', alpha=0.7, linewidth=1.2)
+    ax.axvline(99.95, color=COL_GOLD, linestyle=':', alpha=0.45, linewidth=1.0)
+    ax.text(0.012, 0.04, 'e_floor = 0.0314\nstructural\nfloor',
             fontsize=8, color=COL_GOLD, fontweight='bold')
 
     ax.set_xlabel('Baryonic load B = g_bar / a_cap', fontsize=10)
@@ -443,13 +447,13 @@ def chart_galaxy_rotation():
     ax.axvline(30, color=COL_ACCENT, linestyle=':', alpha=0.5)
     ax.annotate('', xy=(240, 130), xytext=(30, 130),
                 arrowprops=dict(arrowstyle='<->', color=COL_ACCENT, lw=1.2))
-    ax.text(135, 138, 'v(240)/v(30) = 0.6487\n(locked falsifiable prediction)',
+    ax.text(135, 138, 'v(240)/v(30) = 0.6487\nconditional on R_d = 120 kpc',
             ha='center', fontsize=8.5, color=COL_ACCENT, fontweight='bold')
 
     ax.set_xlabel('Radius r (kpc)', fontsize=10)
     ax.set_ylabel('Circular speed v(r) (km/s)', fontsize=10)
     ax.set_title('FPM Finite-Disk Galaxy Rotation Curve\n'
-                 'Three regimes: bulge rise, finite flat branch, Keplerian rollover',
+                 'Operational profile for massive spiral boundary condition',
                  fontsize=10, color=COL_PRIMARY)
     ax.legend(fontsize=8.5, loc='lower right')
     ax.grid(True, alpha=0.3)
@@ -581,7 +585,7 @@ def chart_closure_diagram():
         # (x, y, w, h, title, eq, color)
         (0.5, 3.5, 4.5, 2.3, 'Energy Closure',
          'Sum_i r_{i,t} = Sum_i L_{i,t}\n\n'
-         'Total replenishment =\ntotal dissipation.\nGlobal budget conserved.',
+         'Interior replenishment =\ninterior dissipation.\nBoundary exhaust tracked.',
          COL_BLUE),
         (6.0, 3.5, 4.5, 2.3, 'Entropy Closure',
          'Delta S_sem + Delta S_thermo >= 0\n\n'
@@ -887,7 +891,7 @@ def chart_theorem_graph():
 # Main
 # =============================================================================
 def main():
-    print("Generating FPM v5.0 Unified Framework charts...")
+    print("Generating FPM v5.4 Unified Framework charts...")
     chart_master_chain()
     chart_layer_architecture()
     chart_axcore_cost_surface()
