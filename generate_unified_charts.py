@@ -184,13 +184,13 @@ def chart_master_chain():
 # =============================================================================
 # Chart 2: 5-Layer Architecture
 # =============================================================================
-def chart_layer_architecture():
+def chart_layer_architecture_legacy_unused():
     fig, ax = plt.subplots(figsize=(11, 8.5), constrained_layout=True)
     ax.set_xlim(0, 11)
     ax.set_ylim(0, 8.5)
     ax.axis('off')
 
-    ax.text(5.5, 8.2, 'FPM Five-Layer Axiomatic Architecture',
+    ax.text(5.5, 8.2, 'FPM Legacy Layer Architecture',
             ha='center', va='top', fontsize=14, fontweight='bold', color=COL_PRIMARY)
     ax.text(5.5, 7.85, 'Each layer derives strictly from the layer above. No fitting. No post-hoc parameters.',
             ha='center', va='top', fontsize=9, color=COL_GREY, style='italic')
@@ -250,6 +250,75 @@ def chart_layer_architecture():
     # Side label
     ax.text(11.2, 4.5, 'Derivation\nflow', rotation=90, ha='center',
             va='center', fontsize=9, color=COL_GREY, style='italic')
+
+    return save_fig(fig, '02_layer_architecture.png')
+
+
+def chart_layer_architecture():
+    fig, ax = plt.subplots(figsize=(11, 9.8), constrained_layout=True)
+    ax.set_xlim(0, 11)
+    ax.set_ylim(0, 9.8)
+    ax.axis('off')
+
+    ax.text(5.5, 9.55, 'FPM Layered Axiomatic Architecture',
+            ha='center', va='top', fontsize=14, fontweight='bold', color=COL_PRIMARY)
+    ax.text(5.5, 9.15,
+            'Each layer derives from the layer above. Runtime bridges and audits remain explicit.',
+            ha='center', va='top', fontsize=9, color=COL_GREY, style='italic')
+
+    layers = [
+        ('Layer 0  -  Axioms (5 postulates)',
+         'A1 finite substrate  -  A2 thermodynamic route cost  -  A3 closed universe\n'
+         'A4 discrete causal ticks  -  A5 calibration / max propagation = c',
+         7.65, COL_PRIMARY),
+        ('Layer 1  -  Substrate / Routing Ledger',
+         'Full 3x3 directed tensor R_ij; scalar invariants derived, tensor retained\n'
+         'Route-link cost L_i^+ (AxCore operational formula)\n'
+         'Pure-gauge torsion links A_ij for topological boundary conditions',
+         6.45, COL_BLUE),
+        ('Layer 2  -  Carrier + Viscosity Pipeline',
+         'Native carrier psi_t (9-channel complex state); p_t = |psi_t|^2 observable\n'
+         'Omega_t in [0.50, 0.85]; kappa_t persistence from route-cost pressure\n'
+         'A_N -> C_N weighted ambiguity; e_eff(B)=max((1+B)^(-3/4), e_floor)',
+         5.25, COL_GREEN),
+        ('Layer 3  -  Per-Tick Dynamics / Closure',
+         'Lagrangian L_t = C^sem + C^geo + lambda|dOmega|\n'
+         'Energy ledger E_{t+1}=clip(E_t-L_t+r,0,E_max) + exhaust/starvation ledger\n'
+         'Carrier update psi_{t+1}=psi_t exp(-i theta L_i,t); ZOMBIE LRM quantization',
+         4.05, COL_GOLD),
+        ('Layer 4  -  Theorems (6 exact consequences)',
+         'T1 Dispersion contraction  -  T2 Order sensitivity  -  T3 Accuracy-cost-stability\n'
+         'T4 Zero-drag isotropic loop  -  T5 Hardware calibration  -  T6 Lattice anisotropy decay',
+         2.85, COL_RED),
+        ('Layer 5  -  Physical Bridges',
+         'Lindblad correspondence - Landauer debit - gravity/time/CMB bridges\n'
+         'Born-compatible finite-substrate distribution - joint torsion Bell/CHSH bridge',
+         1.65, COL_SECONDARY),
+        ('Layer 6  -  Calibration, Validation, Audits',
+         'Exact lattice count N_bit-eq = 1,452,997,909; G_FPM audit at T=300 K\n'
+         'Numerical validation suite, SPARC status, CHSH/Born runtime checks',
+         0.45, COL_ACCENT),
+    ]
+
+    for label, content, y, color in layers:
+        rect = FancyBboxPatch((0.3, y), 10.4, 1.05, boxstyle='round,pad=0.05',
+                              edgecolor=color, facecolor=light_fill(color, 0.92),
+                              linewidth=2.0)
+        ax.add_patch(rect)
+        ax.text(0.55, y + 0.88, label, fontsize=10.0, fontweight='bold',
+                color=color, va='top')
+        ax.text(0.55, y + 0.55, content, fontsize=7.1, color=COL_PRIMARY,
+                va='top', family='monospace')
+
+    for y_start, y_end in [(7.65, 7.5), (6.45, 6.3), (5.25, 5.1),
+                           (4.05, 3.9), (2.85, 2.7), (1.65, 1.5)]:
+        arrow = FancyArrowPatch((5.5, y_start), (5.5, y_end),
+                                arrowstyle='->', color=COL_GREY,
+                                mutation_scale=16, linewidth=1.8)
+        ax.add_patch(arrow)
+
+    ax.text(11.15, 4.85, 'Derivation\nand audit flow', rotation=90,
+            ha='center', va='center', fontsize=9, color=COL_GREY, style='italic')
 
     return save_fig(fig, '02_layer_architecture.png')
 

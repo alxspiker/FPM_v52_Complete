@@ -768,11 +768,12 @@ def build_part_i():
 
     flow.extend(chart_img(os.path.join(CHARTS_DIR, '02_layer_architecture.png'),
                           width_cm=15.5,
-                          caption_text="Figure 2. The five-layer architecture. Axioms (Layer 0) "
-                                       "generate the substrate (Layer 1), which generates the "
-                                       "viscosity field (Layer 2), which generates per-tick "
-                                       "dynamics (Layer 3), from which six theorems (Layer 4) "
-                                       "are derived."))
+                          caption_text="Figure 2. The layered architecture. Axioms (Layer 0) "
+                                       "generate the routing substrate (Layer 1), the carrier "
+                                       "and viscosity pipeline (Layer 2), per-tick closure "
+                                       "dynamics (Layer 3), six theorems (Layer 4), physical "
+                                       "bridges (Layer 5), and calibration/validation audits "
+                                       "(Layer 6)."))
 
     flow.append(Paragraph("2.1 Axiom A1: Finite Substrate", styles['H2']))
     flow.append(axiom(
