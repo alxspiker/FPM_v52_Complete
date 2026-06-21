@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "version": "v5.7",
-    "Validation_Suite": "14 primary experiments plus 1 starvation subtest (8b)"
+    "version": "v5.8",
+    "Validation_Suite": "15 primary experiments plus 1 starvation subtest (8b)"
   },
   "axioms": {
     "dim_space": 3,
@@ -780,7 +780,7 @@
     },
     "joint_torsion_bell_chsh": {
       "audit_name": "Joint torsion Bell/CHSH audit",
-      "version": "v5.7",
+      "version": "v5.8",
       "n_angles": 181,
       "angles": [
         0.0,
@@ -1714,7 +1714,7 @@
     },
     "zombie_gated_bell_signature": {
       "audit_name": "ZOMBIE-gated Bell signature audit",
-      "version": "v5.7",
+      "version": "v5.8",
       "E_zombie": 0.13333333333333333,
       "energy_ratio_grid": [
         0.05,
@@ -14963,6 +14963,22 @@
       "experimental_signature": "Bell violation is predicted to be gated by simultaneous deep ZOMBIE-mode operation of both torsion-linked parties. Keeping either wing in FLOW mode, or removing the shared torsion link, returns the CHSH value to the Bell-classical regime.",
       "standard_qm_contrast": "Standard quantum mechanics predicts Bell correlations from the prepared entangled state and analyzer settings, not from an FPM energy-budget gate. This is a candidate falsification target.",
       "verdict": "PASS"
+    },
+    "fine_structure_bare_coupling": {
+      "audit_name": "Fine-structure bare coupling (Torsion Snap)",
+      "version": "v5.8",
+      "mechanism": "Pure-gauge torsion is zero-cost and non-local. Electromagnetism is the paid snap when symmetric strain exceeds c0. Transverse photons are traceless (K1 = 0), so the maximum symmetric capacity is C_sym_max = (1/e_floor)^(1/beta).",
+      "K1_locked": 0.0,
+      "e_floor": 0.0314,
+      "c0": 0.05,
+      "beta_exponent": 1.8,
+      "C_sym_max": 6.839731987929334,
+      "alpha_bare_FPM": 0.007310227957504668,
+      "one_over_alpha_bare": 136.79463975858667,
+      "CODATA_macroscopic_screened_inv": 137.035999084,
+      "relative_difference_from_macro": 0.0017612840934255504,
+      "verdict": "PASS_BARE_COUPLING",
+      "physical_meaning": "1/alpha_bare is the unscreened coupling at dx_univ. The laboratory value 1/137.036 is the macroscopic screened coupling after vacuum polarization. The bare value is stronger, predicting QED charge screening and a finite UV cutoff that avoids the Landau pole."
     }
   },
   "calibration": {
@@ -15135,7 +15151,7 @@
       "verdict": "PASS",
       "audit": {
         "audit_name": "Born-compatible distribution bridge formal audit",
-        "version": "v5.7",
+        "version": "v5.8",
         "n_states": 1000,
         "n_channels": 9,
         "N_bit_eq": 1452997909,
@@ -15159,7 +15175,7 @@
       "verdict": "PASS",
       "audit": {
         "audit_name": "Joint torsion Bell/CHSH audit",
-        "version": "v5.7",
+        "version": "v5.8",
         "n_angles": 181,
         "angles": [
           0.0,
@@ -16101,6 +16117,32 @@
       "S_joint": 2.8284271261122647,
       "partner_energy_after_pull": 0.13333333333333333,
       "zombie_threshold": 0.13333333333333333
+    },
+    {
+      "name": "Fine-structure bare coupling (Torsion Snap)",
+      "key_metric": "1/alpha_bare",
+      "value": 136.79463975858667,
+      "verdict": "PASS_BARE_COUPLING",
+      "alpha_bare_FPM": 0.007310227957504668,
+      "C_sym_max": 6.839731987929334,
+      "CODATA_macroscopic_screened_inv": 137.035999084,
+      "relative_difference_from_macro": 0.0017612840934255504,
+      "audit": {
+        "audit_name": "Fine-structure bare coupling (Torsion Snap)",
+        "version": "v5.8",
+        "mechanism": "Pure-gauge torsion is zero-cost and non-local. Electromagnetism is the paid snap when symmetric strain exceeds c0. Transverse photons are traceless (K1 = 0), so the maximum symmetric capacity is C_sym_max = (1/e_floor)^(1/beta).",
+        "K1_locked": 0.0,
+        "e_floor": 0.0314,
+        "c0": 0.05,
+        "beta_exponent": 1.8,
+        "C_sym_max": 6.839731987929334,
+        "alpha_bare_FPM": 0.007310227957504668,
+        "one_over_alpha_bare": 136.79463975858667,
+        "CODATA_macroscopic_screened_inv": 137.035999084,
+        "relative_difference_from_macro": 0.0017612840934255504,
+        "verdict": "PASS_BARE_COUPLING",
+        "physical_meaning": "1/alpha_bare is the unscreened coupling at dx_univ. The laboratory value 1/137.036 is the macroscopic screened coupling after vacuum polarization. The bare value is stronger, predicting QED charge screening and a finite UV cutoff that avoids the Landau pole."
+      }
     }
   ],
   "master_chain": {
@@ -20949,6 +20991,7 @@
     "alpha_pp_convergence": "simulator_charts/fpm_alpha_pp_convergence.png",
     "closure_diagram": "simulator_charts/fpm_closure_diagram.png",
     "bell_chsh": "simulator_charts/fpm_bell_chsh.png",
-    "zombie_gated_bell": "simulator_charts/fpm_zombie_gated_bell.png"
+    "zombie_gated_bell": "simulator_charts/fpm_zombie_gated_bell.png",
+    "fine_structure_bare_coupling": "simulator_charts/fpm_fine_structure_bare_coupling.png"
   }
 }

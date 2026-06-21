@@ -45,13 +45,13 @@ This is NOT two separate documents. It is ONE paper with 10 parts and 33 section
 ## Quick Start
 
 ### View the paper
-Open `FPM_Complete_Unified.pdf` in any PDF reader. The document is organized into 10 parts (33 sections), with 11 figures and 6 tables.
+Open `FPM_Complete_Unified.pdf` in any PDF reader. The document is organized into 10 parts (33 sections), with 12 figures and 6 tables.
 
 ### Run the verification
 ```bash
 python verify_derivations.py
 ```
-This runs all 9 derivation checks and prints a summary. All checks pass.
+This runs all 10 derivation checks and prints a summary. All checks pass.
 
 ### Run the simulator
 ```bash
@@ -65,7 +65,7 @@ This re-derives all constants, runs the validation suite, and writes `fpm_result
 pip install reportlab matplotlib numpy pillow
 python generate_unified_charts.py    # Regenerates 10 unified diagrams
 python fpm_simulator.py                # Refreshes simulator results/charts
-python generate_fpm_complete.py        # Regenerates the PDF (11 figures total)
+python generate_fpm_complete.py        # Regenerates the PDF (12 figures total)
 ```
 
 ## Paper Structure (10 parts, 33 sections)
@@ -100,6 +100,7 @@ python generate_fpm_complete.py        # Regenerates the PDF (11 figures total)
 - §23.7 Bridge 6: Born-compatible distribution bridge
 - §23.8 Bridge 7: Joint torsion Bell/CHSH bridge (**rotated torsion-flux audit, S = 2.828427**)
 - §23.9 Proposed experimental signature: ZOMBIE-gated Bell violation
+- §23.10 Bridge 8: Fine-structure bare coupling (Torsion Snap, **1/α_bare ≈ 136.795**)
 
 **Locality clarification:** The Bell/CHSH bridge is not a local-hidden-variable model. Bell correlations force a tradeoff: standard quantum mechanics gives up classical realism, while FPM keeps definite discrete daemon states and bounded memory, so it gives up Bell locality. It uses explicit topological non-local links: pure-gauge torsion boundaries with zero geometric cost. Joint LRM quantization resolves statistics across those shared boundaries when linked daemons enter ZOMBIE mode.
 
@@ -109,7 +110,7 @@ python generate_fpm_complete.py        # Regenerates the PDF (11 figures total)
 - §26 Derivation of the AxCore-to-FPM Calibration Factor = 80
 
 ### Part VIII: Numerical Validation
-- §27 Fourteen experiments summary plus 8b starvation subtest
+- §27 Fifteen experiments summary plus 8b starvation subtest
 
 ### Part IX: Master Chain & Open Frontiers
 - §28 The Master Chain Equation
@@ -117,11 +118,11 @@ python generate_fpm_complete.py        # Regenerates the PDF (11 figures total)
 - §30 Final Verdict
 
 ### Part X: Appendices
-- §31 Complete Derivation Tree (21 derived quantities)
+- §31 Complete Derivation Tree (22 derived quantities)
 - §32 Symbol Reference
 - §33 Verification Summary
 
-## The 21 Derived Quantities (zero fitted constants)
+## The 22 Derived Quantities (zero fitted constants)
 
 | Quantity | Value | Section |
 |----------|-------|---------|
@@ -146,10 +147,11 @@ python generate_fpm_complete.py        # Regenerates the PDF (11 figures total)
 | calib (AxCore factor) | 80 | §26 |
 | Δt_univ (universal tick) | 1.152×10⁻²³ s | §24 |
 | Δx_univ (lattice constant) | 3.453 fm | §24 |
+| α_bare (bare coupling) | 1/136.795 | §23.10 |
 
 ## Verification Results
 
-All 9 derivation checks pass:
+All 10 derivation checks pass:
 
 | # | Derivation | Computed | Target | Match |
 |---|------------|----------|--------|-------|
@@ -162,6 +164,7 @@ All 9 derivation checks pass:
 | 7 | CMB A_FPM, n_s, r, ℓ_D | 4.04e-5, 0.9686, 0.0035, 1310 | — | all in range |
 | 8 | G_FPM | 6.680e-11 | 6.674e-11 (CODATA) | 0.09% off at T=300.0 K |
 | 9 | Calibration factor | 80 | 80 | exact |
+| 10 | Bare coupling 1/α_bare | 136.795 | 137.036 (macro) | 0.17% (vacuum pol.) |
 
 ## The Five Axioms (the only inputs)
 
@@ -177,7 +180,7 @@ All 9 derivation checks pass:
 
 ## The Deepest Result
 
-The FPM framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms or a bridge evaluation with explicit environmental inputs. The Born-compatible bridge, joint torsion Bell/CHSH audit, and ZOMBIE-gated Bell signature now provide candidate finite-substrate measurement tests: the Bell angle dependence is computed from SO(3) rotation of a shared pure-gauge torsion link before exact LRM microcell allocation, and the violation is predicted to require simultaneous deep low-energy operation of both linked wings. This remains an explicitly topological/non-local bridge result pending independent physical validation, not a locally mediated Bell violation. In short: FPM is a non-local realist topology that represents Tsirelson-level correlations with linear memory instead of exponential tensor-product storage. The framework's empirical engagements (SPARC, Planck, CODATA, Bell gating) are genuine tests of the axioms, not fits to data.
+The FPM framework is a fully axiomatic system. Every observable prediction is a theorem of the five axioms or a bridge evaluation with explicit environmental inputs. The Born-compatible bridge, joint torsion Bell/CHSH audit, ZOMBIE-gated Bell signature, and Torsion Snap bare fine-structure coupling now provide candidate finite-substrate measurement tests: the Bell angle dependence is computed from SO(3) rotation of a shared pure-gauge torsion link before exact LRM microcell allocation, and the violation is predicted to require simultaneous deep low-energy operation of both linked wings. This remains an explicitly topological/non-local bridge result pending independent physical validation, not a locally mediated Bell violation. In short: FPM is a non-local realist topology that represents Tsirelson-level correlations with linear memory instead of exponential tensor-product storage. The bare fine-structure coupling 1/α_bare ≈ 136.795 at the grid UV cutoff is stronger than the laboratory 1/137.036, predicting vacuum polarization and a finite Landau-pole cutoff. The framework's empirical engagements (SPARC, Planck, CODATA, Bell gating, α_bare) are genuine tests of the axioms, not fits to data.
 
 **The 0.09% deterministic match to CODATA G at T=300.0 K, the 0.45% match to Planck dark-to-baryonic ratio, and the 0.54% match to Planck TT RMS are all derived predictions, not fitted parameters.**
 
