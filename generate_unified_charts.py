@@ -520,6 +520,7 @@ def chart_galaxy_rotation():
             _parse_sparc_rotmod,
             fpm_gravity_susceptibility,
             mond_rar_susceptibility,
+            fpm_gas_boundary_susceptibility,
         )
 
         data_dir = find_sparc_data_dir()
@@ -527,6 +528,7 @@ def chart_galaxy_rotation():
             d_local = derive_all(Axioms())
             x_points = []
             residual_fpm = []
+            residual_gas_boundary = []
             residual_mond = []
             for name, info in sorted(_parse_sparc_master(data_dir).items()):
                 if info["Q"] != 1:
@@ -543,16 +545,23 @@ def chart_galaxy_rotation():
                     if r_kpc <= 0.0 or vbar_sq <= 0.0:
                         continue
                     x_val = max(1e-12, (vbar_sq / r_kpc) / SPARC_A0_KM2_S2_PER_KPC)
+                    gas_fraction = max(0.0, vgas * abs(vgas)) / vbar_sq
                     v_fpm = math.sqrt(max(0.0, vbar_sq * fpm_gravity_susceptibility(x_val, d_local)))
+                    v_gas_boundary = math.sqrt(max(
+                        0.0, vbar_sq * fpm_gas_boundary_susceptibility(x_val, gas_fraction, d_local)
+                    ))
                     v_mond = math.sqrt(max(0.0, vbar_sq * mond_rar_susceptibility(x_val)))
                     x_points.append(x_val)
                     residual_fpm.append(v_fpm - vobs)
+                    residual_gas_boundary.append(v_gas_boundary - vobs)
                     residual_mond.append(v_mond - vobs)
             if x_points:
-                ax.scatter(x_points, residual_fpm, s=8, alpha=0.38,
-                           color=COL_PRIMARY, edgecolors='none', label='FPM residual')
+                ax.scatter(x_points, residual_fpm, s=7, alpha=0.22,
+                           color=COL_PRIMARY, edgecolors='none', label='scalar FPM')
+                ax.scatter(x_points, residual_gas_boundary, s=8, alpha=0.36,
+                           color=COL_BLUE, edgecolors='none', label='gas-boundary FPM')
                 ax.scatter(x_points, residual_mond, s=8, alpha=0.30,
-                           color=COL_GREEN, edgecolors='none', label='RAR/MOND residual')
+                           color=COL_GREEN, edgecolors='none', label='RAR/MOND')
                 plotted_residuals = True
     except Exception as exc:
         ax.text(0.5, 0.5, f'Residual audit unavailable:\n{exc}',
@@ -588,6 +597,7 @@ def chart_galaxy_rotation():
 
     rows = [
         ('e_exp + chi_arrow', '-0.5', 'low-accel slope'),
+        ('alpha', '0.2', 'gas boundary subtraction'),
         ('Omega_max', '0.85', 'amplitude ceiling'),
         ('r_tensor', '0.003486', 'zero-mass regularizer'),
         ('E_zombie', '0.1333', 'field-energy gate'),
@@ -602,7 +612,7 @@ def chart_galaxy_rotation():
                 bbox=dict(boxstyle='square,pad=0.25', facecolor=COL_PRIMARY,
                           edgecolor=COL_PRIMARY))
     for i, row in enumerate(rows):
-        y = y0 - 0.10 * (i + 1)
+        y = y0 - 0.085 * (i + 1)
         fill = '#f6f7f8' if i % 2 == 0 else 'white'
         ax.add_patch(Rectangle((x0 - 0.005, y - 0.03), 0.96, 0.07,
                                transform=ax.transAxes, facecolor=fill,
@@ -614,9 +624,10 @@ def chart_galaxy_rotation():
 
     # Compact RMSE summary below the table.
     methods = ['FPM single-\nsource kernel', 'FPM split-\nsource stress',
-               'FPM repaired\nx^2 bridge', 'RAR / MOND\n(fixed)']
-    rmse = [23.94, 13.65, 11.87, 11.72]
-    colors = [COL_GOLD, COL_BLUE, COL_PRIMARY, COL_GREEN]
+               'FPM repaired\nx^2 bridge', 'FPM gas-boundary\nsource functional',
+               'RAR / MOND\n(fixed)']
+    rmse = [23.94, 13.65, 11.87, 11.61, 11.72]
+    colors = [COL_GOLD, COL_BLUE, COL_PRIMARY, '#4778a0', COL_GREEN]
     inset = ax.inset_axes([0.08, 0.03, 0.86, 0.30])
     y_pos = np.arange(len(methods))
     bars = inset.barh(y_pos, rmse, color=colors, alpha=0.85,
