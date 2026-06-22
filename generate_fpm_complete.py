@@ -58,7 +58,7 @@ os.makedirs(BUILD_DIR, exist_ok=True)
 
 AUTHOR_NAME = "Alx Spiker"
 REPORT_DATE = "20 June 2026"
-VERSION = "v5.9 - Complete Unified Paper"
+VERSION = "v6.0 - Complete Unified Paper"
 VERSION_TAG = VERSION.split()[0].replace('.', '')
 
 # Load numerical results
@@ -1364,32 +1364,48 @@ def build_part_iv():
     flow.append(Paragraph("6.1 The Update Rule", styles['H2']))
     flow.append(Paragraph(
         "At each tick, energy is consumed by the Lagrangian cost and "
-        "replenished by internal redistribution:",
+        "replenished by internal redistribution. The interior update first "
+        "computes a raw energy before any boundary response:",
         styles['Body']))
     flow.extend(eq(
-        r"E_{t+1} = \mathrm{clip}(E_t - \mathcal{L}_t + r_t,\; 0,\; E_{\max})"))
+        r"E_{\mathrm{raw},i,t+1}=E_{i,t}-\mathcal{L}_{i,t}+r_{i,t}"))
     flow.append(Paragraph(
-        "The replenishment rate r<sub>i,t</sub> for daemon i is derived from "
-        "the activity weight w<sub>i</sub> = |&nabla;&Omega;<sub>i,t</sub>| + "
-        "&eta;<sub>geo</sub> |&pi;<sub>i,t</sub> &minus; &tau;<sub>i,t</sub>|, "
-        "ensuring global energy conservation:",
+        "The replenishment rate for daemon i is derived from an activity "
+        "weight that combines the local viscosity gradient with the "
+        "route-target mismatch, ensuring global energy conservation:",
         styles['Body']))
     flow.extend(eq(
         r"r_{i,t} = \left(\sum_j \mathcal{L}_{j,t}\right) \cdot \frac{w_i}"
         r"{\sum_j w_j}, \qquad \sum_i r_{i,t} = \sum_i \mathcal{L}_{i,t}"))
     flow.append(Paragraph(
-        "This is the closed-universe conservation theorem: total "
-        "replenishment equals total dissipation at every interior tick. Boundary "
-        "clipping is not ignored: overflow above E<sub>max</sub> is logged as "
-        "thermal exhaust, and underflow below zero is logged as starvation "
-        "deficit. The internal ledger is strictly conserved; the expanded "
-        "ledger conserves energy when E<sub>exhaust</sub> and "
-        "E<sub>starvation</sub> are explicitly accounted for.",
+        "This is the closed-universe conservation theorem for interior ticks: "
+        "total replenishment equals total dissipation. The v6.0 execution "
+        "engine removes the former passive boundary abstraction. If "
+        "E<sub>raw</sub> exceeds E<sub>max</sub>, the excess is first routed to "
+        "adjacent Z<sup>3</sup> neighbors according to their available capacity. "
+        "Only overflow that cannot be absorbed by the local topology becomes "
+        "external thermal radiation. If E<sub>raw</sub> falls below zero, the "
+        "shortfall is logged as starvation deficit, meaning route-cost work "
+        "that could not be paid.",
         styles['Body']))
     flow.extend(eq(
-        r"E_{\mathrm{raw}} = E_t - \mathcal{L}_t + r_t,\quad "
-        r"E_{\mathrm{exhaust}} = \max(0,E_{\mathrm{raw}}-E_{\max}),\quad "
-        r"E_{\mathrm{starvation}} = \max(0,-E_{\mathrm{raw}})"))
+        r"\Delta_i^+ = \max(0,E_{\mathrm{raw},i}-E_{\max}),\qquad "
+        r"\Delta_i^- = \max(0,-E_{\mathrm{raw},i})"))
+    flow.extend(eq(
+        r"c_j=\max(0,E_{\max}-E_j),\qquad "
+        r"s_{i\to j}=\Delta_i^+\,\frac{c_j}{\sum_{k\in \mathcal{N}(i)} c_k}"))
+    flow.extend(eq(
+        r"E_{\mathrm{exhaust},i}=\max\!\left(0,\Delta_i^+-"
+        r"\sum_{j\in\mathcal{N}(i)}s_{i\to j}\right),\qquad "
+        r"E_{\mathrm{starvation},i}=\Delta_i^-"))
+    flow.append(Paragraph(
+        "In the 12-daemon, 400-tick v6.0 master-chain audit, the active "
+        "boundary resolver routes 14.713 units of thermal spillover into "
+        "neighboring lattice capacity before any external radiation is logged. "
+        "The remaining 58.805 units of exhaust occur only when the local "
+        "neighborhood is saturated; the expanded ledger closes to numerical "
+        "precision against the 59.636-unit starvation ledger.",
+        styles['Body']))
 
     flow.append(Paragraph("6.2 The Mean-Field Truth Target", styles['H2']))
     flow.append(Paragraph(
@@ -1462,18 +1478,22 @@ def build_part_iv():
     flow.append(theorem(
         "<b>Closure Principle 1 (Energy Closure).</b> &sum;<sub>i</sub> r<sub>i,t</sub> = "
         "&sum;<sub>i</sub> L<sub>i,t</sub>. Interior ticks conserve "
-        "&sum;<sub>i</sub> E<sub>i,t</sub>; boundary clipping events are conserved "
-        "only on the expanded ledger that includes thermal exhaust and starvation "
-        "deficit."))
+        "&sum;<sub>i</sub> E<sub>i,t</sub>. Boundary events are resolved by "
+        "neighbor spillover first, then by the expanded ledger containing "
+        "external thermal exhaust and starvation deficit."))
     flow.append(proof(
         "<b>Proof.</b> The replenishment rule r<sub>i,t</sub> = "
         "(&sum;<sub>j</sub> L<sub>j,t</sub>) &middot; w<sub>i</sub>/&sum;<sub>j</sub> w<sub>j</sub> "
         "satisfies &sum;<sub>i</sub> r<sub>i,t</sub> = &sum;<sub>j</sub> L<sub>j,t</sub> "
-        "by construction. The clip operation preserves conservation when all "
-        "daemons remain in the interior of [0, E<sub>max</sub>]. If a daemon "
-        "hits a boundary, the lost overflow is thermal exhaust and the unpaid "
-        "underflow is starvation deficit; adding those boundary ledgers restores "
-        "global accounting. <i>QED</i>"))
+        "by construction. When all daemons remain in the interior of "
+        "[0, E<sub>max</sub>], summing "
+        "E<sub>raw,i,t+1</sub> = E<sub>i,t</sub> - L<sub>i,t</sub> + r<sub>i,t</sub> "
+        "therefore conserves total internal energy. At E<sub>max</sub>, overflow "
+        "is not deleted; it is offered to adjacent lattice neighbors as local "
+        "thermal spillover. Any remainder after neighbor capacity is exhausted "
+        "is external thermal exhaust. At the zero boundary, unpaid work is "
+        "starvation deficit. Adding spillover, exhaust, and starvation to the "
+        "boundary ledger restores global accounting. <i>QED</i>"))
 
     flow.append(Paragraph("7.2 Entropy Closure", styles['H2']))
     flow.append(theorem(

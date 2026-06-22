@@ -64,7 +64,7 @@ plt.rcParams["font.sans-serif"] = ["DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams["figure.dpi"] = 110
 
-FPM_VERSION = "v5.9"
+FPM_VERSION = "v6.0"
 
 # Physical constants (CODATA / SI)
 HBAR = 1.054571817e-34       # J*s
@@ -698,7 +698,8 @@ def viscosity_update(daemon: DaemonState, d: DerivedConstants,
 # L_t = C_sem + C_geo + lambda * |Delta Omega|
 # C_sem = c0 + w_D * D_{t+1} + w_I * I_t   (AxCore base_cost + critic_penalty)
 # C_geo = w_T * |p_{t+1} - tau| + w_A * b^gamma * |pi - tau| * (1 + 4*q)
-# E_{t+1} = clip(E_t - L_t + r_t, 0, E_max);  sum r_i = sum L_i
+# E_raw = E_t - L_t + r_t; active boundary resolver routes overflow to
+# adjacent capacity before external exhaust; sum r_i = sum L_i
 # =============================================================================
 
 
@@ -2394,8 +2395,10 @@ class MasterChainTrajectory:
     mean_smooth: List[float] = field(default_factory=list)
     metabolic_mode: List[str] = field(default_factory=list)
     boundary_clip_events: int = 0
+    thermal_spillover: List[float] = field(default_factory=list)
     thermal_exhaust: List[float] = field(default_factory=list)
     starvation_deficit: List[float] = field(default_factory=list)
+    total_thermal_spillover: float = 0.0
     total_thermal_exhaust: float = 0.0
     total_starvation_deficit: float = 0.0
     microcell_quantization_events: int = 0
@@ -2524,21 +2527,53 @@ def run_master_chain(d: DerivedConstants,
         # 3. Closed energy ledger: replenishment (sum r = sum L by construction)
         rs = replenishment_rule(daemons, Ls)
 
-        # 4. State updates. Boundary clipping is ledgered as physical exhaust
-        # or starvation deficit, so the internal ledger plus boundary ledger is
-        # explicitly accounted for.
+        # 4. State updates with active boundary resolver. Overflow first
+        # attempts local Z^3-neighbor spillover; only unaccepted overflow is
+        # logged as true external thermal exhaust.
         tick_exhaust = 0.0
+        tick_spillover = 0.0
         tick_starvation = 0.0
         joint_processed = set()
+        raw_energies = [dm.E - Ls[i] + rs[i] for i, dm in enumerate(daemons)]
+        overflows = [0.0] * n_daemons
         for i, dm in enumerate(daemons):
-            raw_E = dm.E - Ls[i] + rs[i]
-            exhaust = max(0.0, raw_E - d.E_max)
-            starvation = max(0.0, -raw_E)
-            tick_exhaust += exhaust
-            tick_starvation += starvation
-            if exhaust > 0.0 or starvation > 0.0:
+            raw_E = raw_energies[i]
+            if raw_E > d.E_max:
+                overflows[i] = raw_E - d.E_max
+                dm.E = d.E_max
                 traj.boundary_clip_events += 1
-            dm.E = float(np.clip(raw_E, 0.0, d.E_max))
+            elif raw_E < 0.0:
+                starvation = -raw_E
+                tick_starvation += starvation
+                dm.E = 0.0
+                traj.boundary_clip_events += 1
+            else:
+                dm.E = float(raw_E)
+
+        for i, overflow in enumerate(overflows):
+            if overflow <= 0.0:
+                continue
+            left_idx = (i - 1) % n_daemons
+            right_idx = (i + 1) % n_daemons
+            cap_left = max(0.0, d.E_max - daemons[left_idx].E)
+            cap_right = max(0.0, d.E_max - daemons[right_idx].E)
+            total_cap = cap_left + cap_right
+            if total_cap <= 0.0:
+                tick_exhaust += overflow
+                continue
+            if overflow <= total_cap:
+                spill_left = overflow * (cap_left / total_cap)
+                spill_right = overflow * (cap_right / total_cap)
+            else:
+                spill_left = cap_left
+                spill_right = cap_right
+            daemons[left_idx].E += spill_left
+            daemons[right_idx].E += spill_right
+            routed = spill_left + spill_right
+            tick_spillover += routed
+            tick_exhaust += max(0.0, overflow - routed)
+
+        for i, dm in enumerate(daemons):
             # Native Born-carrier runtime update: route cost drives U(1) phase.
             dm.phase_rotate(route_cost_channels(dm, Ls[i]))
             dm.Omega_prev = Os[i]
@@ -2613,8 +2648,10 @@ def run_master_chain(d: DerivedConstants,
             max(set([metabolic_mode(dm.E, d.E_max) for dm in daemons]),
                 key=[metabolic_mode(dm.E, d.E_max) for dm in daemons].count)
         )
+        traj.thermal_spillover.append(tick_spillover)
         traj.thermal_exhaust.append(tick_exhaust)
         traj.starvation_deficit.append(tick_starvation)
+        traj.total_thermal_spillover += tick_spillover
         traj.total_thermal_exhaust += tick_exhaust
         traj.total_starvation_deficit += tick_starvation
 
@@ -3170,8 +3207,9 @@ def main() -> None:
                             baryonic_load=0.0)
     print(f"  Initial E = {traj.total_E[0]:.6f}")
     print(f"  Final E   = {traj.total_E[-1]:.6f}")
-    print(f"  Boundary clip events:        {traj.boundary_clip_events}")
-    print(f"  Thermal exhaust ledger:       {traj.total_thermal_exhaust:.6f}")
+    print(f"  Boundary resolver events:     {traj.boundary_clip_events}")
+    print(f"  Thermal spillover routed:     {traj.total_thermal_spillover:.6f}")
+    print(f"  External exhaust ledger:      {traj.total_thermal_exhaust:.6f}")
     print(f"  Starvation deficit ledger:    {traj.total_starvation_deficit:.6f}")
     print(f"  Microcell quantization events: {traj.microcell_quantization_events}")
     print(f"  Joint torsion quantizations:   {traj.joint_torsion_quantization_events}")
@@ -3251,8 +3289,10 @@ def main() -> None:
             "mean_smooth": traj.mean_smooth,
             "metabolic_mode": traj.metabolic_mode,
             "boundary_clip_events": traj.boundary_clip_events,
+            "thermal_spillover": traj.thermal_spillover,
             "thermal_exhaust": traj.thermal_exhaust,
             "starvation_deficit": traj.starvation_deficit,
+            "total_thermal_spillover": traj.total_thermal_spillover,
             "total_thermal_exhaust": traj.total_thermal_exhaust,
             "total_starvation_deficit": traj.total_starvation_deficit,
             "microcell_quantization_events": traj.microcell_quantization_events,
@@ -3276,7 +3316,8 @@ def main() -> None:
     print("    -> (H_N, S_N)")
     print("    -> A_N -> C_N -> kappa_t -> Omega_t")
     print("    -> L_t = C_sem + C_geo + lambda|dOmega|")
-    print("    -> E_{t+1} = clip(E_t - L_t + r, 0, E_max)")
+    print("    -> E_raw = E_t - L_t + r")
+    print("    -> active boundary resolver: neighbor spillover, external exhaust, starvation")
     print("    -> psi_{i,t+1}=psi_{i,t} exp(-i theta L_{i,t})")
     print("    -> (D_{t+1}, p_{t+1}, b_{t+1})")
     print("    -> {Lindblad, Landauer, Gravity, Time, CMB, Born, Bell/CHSH, alpha_bare} bridges")

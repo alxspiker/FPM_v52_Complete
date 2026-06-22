@@ -16,8 +16,12 @@ Verifies every claimed derivation in the framework:
 """
 import math
 import json
+import sys
 from pathlib import Path
 import numpy as np
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 print("=" * 78)
 print("FPM — Mathematical Derivation Verification")
@@ -387,7 +391,7 @@ print("Claim: A_FPM, n_s, r, ell_D derived from stripped Boltzmann oscillator")
 print()
 
 # A_FPM = (2/3) * sqrt(16/3 / N_bit-eq)
-N_bit_eq = 1.453132512e9  # bit-equivalent substrate capacity
+N_bit_eq = 1_452_997_909  # exact Z^3 lattice-point count within alpha_PP sphere
 A_FPM = (2 / 3) * math.sqrt((16 / 3) / N_bit_eq)
 print(f"  A_FPM = (2/3) * sqrt((16/3) / N_bit-eq)")
 print(f"       = (2/3) * sqrt({16/3:.4f} / {N_bit_eq:.4e})")
@@ -451,11 +455,11 @@ print("Claim: G_FPM derived from product-twirled Landauer injection factors")
 print()
 
 # Constants
-c = 2.998e8  # m/s
-h = 6.626e-34  # J*s
+c = 2.99792458e8  # m/s
+h = 6.62607015e-34  # J*s
 hbar = h / (2 * math.pi)
-k_B = 1.381e-23  # J/K
-m_e = 9.109e-31  # kg
+k_B = 1.380649e-23  # J/K
+m_e = 9.1093837015e-31  # kg
 T = 300.0  # substrate operating temperature (room temperature, ~300 K)
 # Note: T is the operational temperature of the computational substrate,
 # NOT the CMB temperature. The Landauer bridge gives Delta Q = k_B*T*ln(2)
@@ -504,7 +508,7 @@ rel_error = (G_FPM - G_CODATA) / G_CODATA
 print(f"\n  CODATA G  = {G_CODATA:.4e} m^3 kg^-1 s^-2")
 print(f"  Relative error = {rel_error*100:.4f}%")
 assert abs(rel_error) < 0.001  # within 0.1%
-print(f"  VERIFIED: G_FPM within 0.05% of CODATA ✓")
+print(f"  VERIFIED: G_FPM within 0.1% of CODATA ✓")
 
 # ============================================================================
 # Derivation 9: AxCore-to-FPM calibration factor
@@ -637,7 +641,7 @@ print("  [4] 16/3 ledger inertia                  -> 5.333 vs 5.357      ✓")
 print("  [5] Lag ceiling                          -> gamma_max = 31.87   ✓")
 print("  [6] Point-Pair coefficient               -> alpha_PP = 702.628  ✓")
 print("  [7] CMB source spectrum                  -> A, n_s, r, ell_D    ✓")
-print("  [8] G_FPM                                -> 6.677e-11 vs CODATA ✓")
+print("  [8] G_FPM                                -> 6.680e-11 vs CODATA ✓")
 print("  [9] AxCore-to-FPM calibration factor     -> 80                  ✓")
 print("  [10] Bare coupling 1/alpha_bare          -> 136.795 vs 137.036  ✓")
 print()

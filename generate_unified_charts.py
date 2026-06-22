@@ -99,11 +99,11 @@ def chart_master_chain():
         ('kappa_t, Omega_t\npersistence +\nviscosity', 13.25, 4.15, 1.75, 1.25, COL_GREEN, 'L2'),
         ('L_t = C^sem + C^geo + lambda|dOmega|\n(per-tick Lagrangian, AxCore-derived)',
          4.45, 2.55, 6.6, 0.95, COL_GOLD, 'L3'),
-        ('E_{t+1} = clip(E_t - L_t + r, 0, E_max)\n+ boundary ledger: exhaust / starvation',
+        ('E_raw = E_t - L_t + r\nactive boundary: spillover / exhaust / starvation',
          4.45, 1.35, 6.6, 0.95, COL_GOLD, 'L3'),
         ('psi_{t+1} = psi_t exp(-i theta L_i,t)\nZOMBIE: finite LRM / joint torsion quantization',
          4.45, 0.15, 6.6, 0.95, COL_GOLD, 'L3'),
-        ('Physical bridges:\nLindblad, Landauer,\nGravity, Time, CMB,\nBorn, Bell/CHSH',
+        ('Physical bridges:\nLindblad, Landauer,\nGravity, Time, CMB,\nBorn, Bell/CHSH,\nalpha_bare',
          12.35, 1.2, 3.0, 2.15, COL_RED, 'L5'),
     ]
 
@@ -219,7 +219,7 @@ def chart_layer_architecture_legacy_unused():
 
         ('Layer 3  ·  Per-Tick Dynamics',
          'Lagrangian L_t = C^sem + C^geo + lambda|dOmega|\n'
-         'Closed energy ledger E_{t+1} = clip(E_t - L_t + r, 0, E_max)\n'
+         'Closed energy ledger with active neighbor spillover at E_max\n'
          'Mean-field truth target tau_t (network consensus)',
          2.2, COL_GOLD),
 
@@ -283,7 +283,7 @@ def chart_layer_architecture():
          5.25, COL_GREEN),
         ('Layer 3  -  Per-Tick Dynamics / Closure',
          'Lagrangian L_t = C^sem + C^geo + lambda|dOmega|\n'
-         'Energy ledger E_{t+1}=clip(E_t-L_t+r,0,E_max) + exhaust/starvation ledger\n'
+         'Energy ledger E_raw=E_t-L_t+r; active boundary routes spillover/exhaust/starvation\n'
          'Carrier update psi_{t+1}=psi_t exp(-i theta L_i,t); ZOMBIE LRM quantization',
          4.05, COL_GOLD),
         ('Layer 4  -  Theorems (6 exact consequences)',
@@ -292,7 +292,7 @@ def chart_layer_architecture():
          2.85, COL_RED),
         ('Layer 5  -  Physical Bridges',
          'Lindblad correspondence - Landauer debit - gravity/time/CMB bridges\n'
-         'Born-compatible finite-substrate distribution - joint torsion Bell/CHSH bridge',
+         'Born-compatible distribution - joint torsion Bell/CHSH - alpha_bare bridge',
          1.65, COL_SECONDARY),
         ('Layer 6  -  Calibration, Validation, Audits',
          'Exact lattice count N_bit-eq = 1,452,997,909; G_FPM audit at T=300 K\n'
